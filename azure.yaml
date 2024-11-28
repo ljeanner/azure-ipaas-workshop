@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: azure-ipaas-workshop
+services:
+  dataprocessing:
+    project: ./src/dataprocessing
+    language: js
+    host: function
+  datafetching:
+    project: ./src/datafetching
+    language: js
+    host: function
