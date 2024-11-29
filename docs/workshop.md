@@ -507,4 +507,4 @@ Finally, let's check if our message is stored in our CosmosDB container.
 
 You should see your transformed message in the `flightbookings` container: 
 
-![alt text](assets/image-19.png)
+![alt text](assets/image-20.png)
