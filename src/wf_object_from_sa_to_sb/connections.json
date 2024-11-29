@@ -1,0 +1,50 @@
+{
+    "managedApiConnections": {
+        "azureeventgrid": {
+            "api": {
+                "id": "/subscriptions/bb0fca45-c3c9-4486-95b4-ebd8d0cdbc78/providers/Microsoft.Web/locations/westeurope/managedApis/azureeventgrid"
+            },
+            "authentication": {
+                "type": "ManagedServiceIdentity"
+            },
+            "connection": {
+                "id": "/subscriptions/bb0fca45-c3c9-4486-95b4-ebd8d0cdbc78/resourceGroups/rg-handsonlab-01/providers/Microsoft.Web/connections/azureeventgrid"
+            },
+            "connectionProperties": {
+                "authentication": {
+                    "audience": "https://management.core.windows.net/",
+                    "type": "ManagedServiceIdentity"
+                }
+            },
+            "connectionRuntimeUrl": "https://c2ad5d54668d4492.15.common.logic-westeurope.azure-apihub.net/apim/azureeventgrid/ed555334b5b541d48d508d851c4144cd"
+        }
+    },
+    "serviceProviderConnections": {
+        "AzureBlob": {
+            "displayName": "co-sa-blobstorage",
+            "parameterSetName": "ManagedServiceIdentity",
+            "parameterValues": {
+                "authProvider": {
+                    "Type": "ManagedServiceIdentity"
+                },
+                "blobStorageEndpoint": "@appsetting('AzureBlob_blobStorageEndpoint')"
+            },
+            "serviceProvider": {
+                "id": "/serviceProviders/AzureBlob"
+            }
+        },
+        "serviceBus": {
+            "displayName": "co-sb-servicebus",
+            "parameterSetName": "ManagedServiceIdentity",
+            "parameterValues": {
+                "authProvider": {
+                    "Type": "ManagedServiceIdentity"
+                },
+                "fullyQualifiedNamespace": "@appsetting('serviceBus_fullyQualifiedNamespace')"
+            },
+            "serviceProvider": {
+                "id": "/serviceProviders/serviceBus"
+            }
+        }
+    }
+}
