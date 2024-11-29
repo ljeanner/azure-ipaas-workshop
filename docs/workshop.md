@@ -144,9 +144,92 @@ TODO: describe what the attendee has learned in this lab
 
 # Lab 3 : Exposing and monetizing APIs (45m)
 
-TODO: intro
+For this Lab, we will focus on the following scope :
 
-## Step1 (TBD)
+![image](/docs/assets/24ba989b-5d4c-4bb6-9f9b-ec9a1175b8f0.jpg)
+
+## Step1 : Expose an API (5 minutes)
+
+In this first step, we will learn how to expose an API on Azure APIM. We will publish the API to fetch orders deployed in Lab 2.
+
+<div class="task" data-title="Task">
+
+- Go the Azure APIM `ApimName`
+- On the left pane click on `APIS`
+- Then, click on `+ Add API` and on the group `Create from Azure resource` select the tile `Function App`
+
+**Add a screenshot**
+
+- In the window that opens :
+  - For the field `Function App`, click on `Browse`
+  - Then on the windows that opens : 
+    - On _Configure required settings_, click on `Select` and choose your ***Function App***
+
+      **Add a screenshot**
+
+    - Be sure the function `FetchOrders` is select and click on select
+
+      **Add a screenshot**
+
+  - Replace the values for the fields with the following values :
+    - ***Display name***: `Orders API`
+    - ***API URL suffix***: `orders`
+  - Click on `Create`
+
+✅ **Now the API is ready.** 
+
+<div class="task" data-title="Test">
+
+> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
+>**Add a screenshot**
+
+</div>
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+TODO: provide solution
+
+</details>
+
+## Step2 : Manage your API with Product (10 minutes)
+
+<div class="task" data-title="Task">
+
+> - TODO: first task
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+TODO: provide solution
+
+</details>
+
+## Step3 : Securize your API (10 minutes)
+
+On your API Order
+
+<div class="task" data-title="Task">
+
+> - TODO: first task
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+TODO: provide solution
+
+</details>
+
+## Step 4 : Change the behaviour of your API with APIM Policies (15 minutes)
 
 <div class="task" data-title="Task">
 
@@ -164,8 +247,12 @@ TODO: provide solution
 
 ## Lab 3 : Summary
 
-TODO: describe what the attendee has learned in this lab
+In this lab, we learn how to use Azure APIM in a four-step process:
 
+1. **Expose an API:** Understand how to publish APIs on the Azure APIM platform, enabling seamless integration and accessibility for external and internal consumers.
+2. **Manage Your API with Products:** Organize APIs into products to streamline access and define usage plans, making API consumption structured and manageable.
+3. **Secure Your API:** Implement robust security measures, including subscription keys for controlled access and OAuth for modern authentication and authorization.
+4. **Modify API Behavior Using Policies:** Explore the policy catalog and apply APIM policies to dynamically customize API behavior, by implementing rate limiting. Additionally, create a custom policy through a use case focused on monetizing APIs.
 
 ---
 
