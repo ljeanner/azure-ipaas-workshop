@@ -436,36 +436,36 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 ```xml
 
 <set-variable name="creditValue" value="{{credit}}" />
-<!-- Check if the credit value is greater than 0 -->
-<choose>
-  <when condition="@(int.Parse((string)context.Variables.GetValueOrDefault("creditValue")) > 0)">
-    <set-variable name="newCreditValue" value="@(int.Parse((string)context.Variables.GetValueOrDefault("creditValue")) - 1)" />
-    <send-request mode="new" response-variable-name="credit" timeout="60" ignore-error="false">
-      <set-url>https://management.azure.com/subscriptions/3314da4a-7f83-4380-9d92-7b96c6fa78c6/resourceGroups/rg-handsonlab-01/providers/Microsoft.ApiManagement/service/apim-handsonlab-01/namedValues/credit?api-version=2024-05-01</set-url>
-      <set-method>PATCH</set-method>
-      <set-header name="Content-Type" exists-action="override">
-        <value>application/json</value>
-      </set-header>
-      <set-body template="liquid">
-      {
-        "properties": {
-          "value": "{{context.Variables["newCreditValue"]}}"
-        }
-      }
-      </set-body>
-      <authentication-managed-identity resource="https://management.azure.com" />
-    </send-request>
-  </when>
-  <otherwise>
-    <return-response>
-      <set-status code="429" reason="Too Many Requests" />
-      <set-header name="Content-Type" exists-action="override">
-        <value>application/json</value>
-      </set-header>
-      <set-body>{"error": {"code": "CREDIT_LIMIT_EXCEEDED","message": "Your credit limit is insufficient. Please check your account or contact support."}}</set-body>
-    </return-response>
-  </otherwise>
-</choose>
+        <!-- Check if the credit value is greater than 0 -->
+        <choose>
+            <when condition="@(int.Parse((string)context.Variables.GetValueOrDefault("creditValue")) > 0)">
+                <set-variable name="newCreditValue" value="@(int.Parse((string)context.Variables.GetValueOrDefault("creditValue")) - 1)" />
+                <send-request mode="new" response-variable-name="credit" timeout="60" ignore-error="false">
+                    <set-url>https://management.azure.com/subscriptions/{{subscription}}/resourceGroups/{{resourcegroup}}/providers/Microsoft.ApiManagement/service/{{apim}}/namedValues/credit?api-version=2024-05-01</set-url>
+                    <set-method>PATCH</set-method>
+                    <set-header name="Content-Type" exists-action="override">
+                        <value>application/json</value>
+                    </set-header>
+                    <set-body template="liquid">
+                    {
+                        "properties": {
+                        "value": "{{context.Variables["newCreditValue"]}}"
+                        }
+                    }
+                    </set-body>
+                    <authentication-managed-identity resource="https://management.azure.com" />
+                </send-request>
+            </when>
+            <otherwise>
+                <return-response>
+                    <set-status code="429" reason="Too Many Requests" />
+                    <set-header name="Content-Type" exists-action="override">
+                        <value>application/json</value>
+                    </set-header>
+                    <set-body>{"error": {"code": "CREDIT_LIMIT_EXCEEDED","message": "Your credit limit is insufficient. Please check your account or contact support."}}</set-body>
+                </return-response>
+            </otherwise>
+        </choose>
 
 ```
 
