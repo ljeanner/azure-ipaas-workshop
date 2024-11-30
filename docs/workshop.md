@@ -859,7 +859,7 @@ TODO: describe what the attendee has learned in this lab sync and async flows wi
 
 For this Lab, we will focus on the following scope :
 
-![image](/docs/assets/lab3/lab3-scope.jpg)
+![image](assets/lab3/lab3-scope.jpg)
 
 ## Expose an API (5 minutes)
 
@@ -869,18 +869,18 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 2. On the left pane click on `APIS`
 3. Then, click on `+ Add API` and on the group `Create from Azure resource` select the tile `Function App`
 
-    ![image](/docs/assets/lab3/part1-step3.jpg)
+    ![image](assets/lab3/part1-step3.jpg)
 
 4. In the window that opens :
     1. For the field `Function App`, click on `Browse`
     2. Then on the windows that opens :
     3. On _Configure required settings_, click on `Select` and choose your **Function App**
 
-        ![image](/docs/assets/lab3/part1-step4_2.jpg)
+        ![image](assets/lab3/part1-step4_2.jpg)
 
     4. Be sure the function `FetchOrders` is select and click on `Select`
 
-        ![image](/docs/assets/lab3/part1-step4_3.jpg)
+        ![image](assets/lab3/part1-step4_3.jpg)
 
 5. Replace the values for the fields with the following values :
       - **Display name**: `Orders API`
@@ -892,7 +892,7 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 
 
 > Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
->![image](/docs/assets/lab3/part1.jpg)
+>![image](assets/lab3/part1.jpg)
 
 </div>
 
@@ -910,7 +910,7 @@ Now the API is published, we will learn how to create a **Product** we will use 
 
 1. On the APIM screen, in the menu on the left, click on `Products`, then click on `+ Add`.
 
-    ![image](/docs/assets/lab3/part2-step1.jpg)
+    ![image](assets/lab3/part2-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Display name**: `Basic`
@@ -919,18 +919,18 @@ Now the API is published, we will learn how to create a **Product** we will use 
       - `Published`
       - `Requires Subscription`
 
-    ![image](/docs/assets/lab3/part2-step2.jpg)
+    ![image](assets/lab3/part2-step2.jpg)
 
 3. Select the created product from the list and click on it.
 
 4. On the next screen, click on `+ Add API`. In the right-hand menu that appears, select the API `Orders API` (the one create on the step 1) and then click `Select`.
 
-    ![image](/docs/assets/lab3/part2-step4.jpg)
+    ![image](assets/lab3/part2-step4.jpg)
 
 5. Select `Access control` from the menu on the left.
 6. Click on `+ Add group`, then in the right-hand menu, select Developers before clicking on `Select`.
 
-    ![image](/docs/assets/lab3/part2-step6.jpg)
+    ![image](assets/lab3/part2-step6.jpg)
 
 7. Repeat steps 1 to 6 to create another product named `Premium`
 
@@ -952,7 +952,7 @@ We will below how create the subscription keys.
 
 1. On the APIM screen, in the menu on the left, click on `Subscriptions`, then click on `+ Add subscription`.
 
-    ![image](/docs/assets/lab3/part3_1-step1.jpg)
+    ![image](assets/lab3/part3_1-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Name**: `Basic-Subscription`
@@ -960,7 +960,7 @@ We will below how create the subscription keys.
     - **Scope**: `Product`
     - **Product**: `Basic`
 
-    ![image](/docs/assets/lab3/part3_1-step2.jpg)
+    ![image](assets/lab3/part3_1-step2.jpg)
 
 3. For the purpose of the part 4, repeat steps 1 and 2 to create another subscription linked to the product `Premium`, with the following fields value :
     - **Name**: `Premium-Subscription`
@@ -970,7 +970,7 @@ We will below how create the subscription keys.
 
 Now that we have created two subscriptions, each corresponding to one of our products, we can view their values by right-clicking on them and selecting `Show/hide keys`
 
-![image](/docs/assets/lab3/part3_1.jpg)
+![image](assets/lab3/part3_1.jpg)
 
 > Be sure to note down the values of your keys to use them in the tests we will perform.
 
@@ -984,13 +984,13 @@ We will know test our API with the subscription key.
 2. Next, click on the `Test` tab and copy the value under `Request URL`.
 3. Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
 
-    ![image](/docs/assets/lab3/part3_1_ResultF.jpg)
+    ![image](assets/lab3/part3_1_ResultF.jpg)
 
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
 
 4. In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
 
-    ![image](/docs/assets/lab3/part3_1_ResultG.jpg)
+    ![image](assets/lab3/part3_1_ResultG.jpg)
 
 > ✅ The call is now successful with a 200 OK response.
 
@@ -1001,7 +1001,7 @@ We will now see how to securize our API with the OAuth 2.0 standard
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-    ![image](/docs/assets/lab3/part3_2-step2.jpg)
+    ![image](assets/lab3/part3_2-step2.jpg)
 
 3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
@@ -1017,13 +1017,13 @@ We will now see how to securize our API with the OAuth 2.0 standard
 
 ```
 
-  ![image](/docs/assets/lab3/part3_2-step3.jpg)
+  ![image](assets/lab3/part3_2-step3.jpg)
 
 We will now see how to test our API securized by the OAuth 2.0 standard
 
 1. Open Postman, on our previous request and click on `Send`.
 
-    ![image](/docs/assets/lab3/part3_2_ResultF.jpg)
+    ![image](assets/lab3/part3_2_ResultF.jpg)
 
 > 🔴 The API Manager returns a 401 error. Indeed, it is now necessary to pass the token in order to be authorized to call the API.
 
@@ -1039,14 +1039,14 @@ We will now see how to test our API securized by the OAuth 2.0 standard
     - Click on Send
     - Retrieve the `access_token` returned by the identity provider.
 
-    ![image](/docs/assets/lab3/part3_2_ResultToken.jpg)
+    ![image](assets/lab3/part3_2_ResultToken.jpg)
 
 3. Go back to the `FetchOrders` request.
 4. In the `Authorization` section, choose in the `Auth Type` list the value `Bearer Token` and copy/paste the value retrieved in step 2.
 
 5. Send the request and observe the result.
 
-    ![image](/docs/assets/lab3/part3_2_ResultG.jpg)
+    ![image](assets/lab3/part3_2_ResultG.jpg)
 
 > ✅ The Orders API is now secured using the OAuth 2.0 framework!
 
@@ -1069,7 +1069,7 @@ To begin, we will set a limit for the Basic user to ensure they cannot call our 
 1. On the APIM screen, in the menu on the left, click on `Products`, then select the product `Basic` from the list and click on it.
 2. Go to `Policies`. On the right, in the `Inbound processing` section, click on the `+ Add policy` access the policy catalog.
 
-    ![image](/docs/assets/lab3/part4_1-step2.jpg)
+    ![image](assets/lab3/part4_1-step2.jpg)
 
 3. Click on the tile `rate-limit-by-key`
 4. In the window that opens, fill in the fields with the following values and then click `Save`:
@@ -1078,13 +1078,13 @@ To begin, we will set a limit for the Basic user to ensure they cannot call our 
     - **Counter Key**: `API subscription`
     - **increment condition**: `Any request`
 
-    ![image](/docs/assets/lab3/part4_1-step4.jpg)
+    ![image](assets/lab3/part4_1-step4.jpg)
 
 5. Go back to Postman and run about ten closely spaced tests.
 
 > Make sure to test using the subscription key corresponding to the `Basic` product.
 
-![image](/docs/assets/lab3/part4_1-Result.jpg)
+![image](assets/lab3/part4_1-Result.jpg)
 
 >💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
 
@@ -1103,7 +1103,7 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 1. On the APIM screen, in the menu on the left, click on `Products`, then select the product `Premium` from the list and click on it.
 2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-![image](/docs/assets/lab3/part4_2-step2.jpg)
+![image](assets/lab3/part4_2-step2.jpg)
 
 3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
@@ -1146,17 +1146,17 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 4. On the APIM screen, in the menu on the left, click on `Named values`, then ensure that the value of the named value `Credit` is set to `0`.
 5. Go back to Postman and run a test
 
-    ![image](/docs/assets/lab3/part4_2-ResultF.jpg)
+    ![image](assets/lab3/part4_2-ResultF.jpg)
 
 >🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
 
 6. Go back on the APIM screen, in the menu on the left, click on `Named values`, then select the named value `Credit` from the list and click on it and set the Value to `1` and click on `Save`.
 
-    ![image](/docs/assets/lab3/part4_2-step5.jpg)
+    ![image](assets/lab3/part4_2-step5.jpg)
 
 7. Go back to Postman and run about a test and observe the result.
 
-    ![image](/docs/assets/lab3/part4_2-ResultG.jpg)
+    ![image](assets/lab3/part4_2-ResultG.jpg)
 
 > ✅ Now we have credit, so the call is successful.
 
