@@ -7,13 +7,18 @@ description: In this workshop you will learn how to build an event-driven applic
 level: intermediate # Required. Can be 'beginner', 'intermediate' or 'advanced'
 navigation_numbering: false
 authors: # Required. You can add as many authors as needed
-  - Iheb Khemissi
   - Guillaume David
+  - Alexandre Dejacques
+  - Iheb Khemissi
+  - Louis-Guillaume Morand
+  
 contacts: # Required. Must match the number of authors
-  - "@ikhemissi"
   - "@gdaCellenza"
+  - "alexandre.dejacques@cellenza.com"
+  - "@ikhemissi"
+  - "@lgmorand"
 duration_minutes: 180
-tags: azure, ipaas, functions, logic apps, apim, service bus, event grid, entra, cosmosdb, codespace, devcontainer, innovation day
+tags: azure, ipaas, functions, logic apps, apim, service bus, event grid, entra, cosmosdb, codespace, devcontainer
 navigation_levels: 3
 
 ---
