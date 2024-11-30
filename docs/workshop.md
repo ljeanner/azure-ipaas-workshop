@@ -33,14 +33,11 @@ During this workshop you will have the instructions to complete each steps. The 
 
 </div>
 
-
-## Scenario
-
 TODO: describe a business scenarion around order processing
 
 ## Tooling and services
 
-TODO: provide a 1-line description for iPaaS services + azd + codespaces 
+TODO: provide a 1-line description for iPaaS services + azd + codespaces
 
 ## Prepare your dev environment
 
@@ -199,7 +196,7 @@ Locate your data processing Function App (name starting with `func-proc-lab`), c
 
 You should see a new recent invocation (this may take a while).
 
-Check the logs of the invocation to get more details. 
+Check the logs of the invocation to get more details.
 
 </details>
 
@@ -218,6 +215,7 @@ In this step, we will update the `ProcessOrders` function to process orders whil
 > - You can use the environment variables `COSMOS_DB_DATABASE_NAME`, `COSMOS_DB_PROCESSED_CONTAINER_NAME`, and `COSMOS_DB__accountEndpoint` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-<SUFFIX>`
 >
 > - You can leverage the [CosmosDB output binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv4&pivots=programming-language-javascript)
+
 </div>
 
 <details>
@@ -298,6 +296,7 @@ In this last exercice of Lab2, you need to update the data fetching Function App
 <div class="tip" data-title="Tips">
 
 > - You can leverage the data returned from the [CosmosDB input binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript)
+
 </div>
 
 <details>
@@ -387,8 +386,8 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 
 4. In the window that opens :
     1. For the field `Function App`, click on `Browse`
-    2. Then on the windows that opens : 
-    3. On _Configure required settings_, click on `Select` and choose your ***Function App***
+    2. Then on the windows that opens :
+    3. On _Configure required settings_, click on `Select` and choose your **Function App**
 
         ![image](/docs/assets/lab3/part1-step4_2.jpg)
 
@@ -397,8 +396,8 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
         ![image](/docs/assets/lab3/part1-step4_3.jpg)
 
 5. Replace the values for the fields with the following values :
-      - ***Display name***: `Orders API`
-      - ***API URL suffix***: `orders`
+      - **Display name**: `Orders API`
+      - **API URL suffix**: `orders`
 
 6. Click on `Create`
 
@@ -463,13 +462,13 @@ TODO: provide solution
 
 </details>
 
-
 ## 🚀 Part 3 : Securize your API (15 minutes)
 
 Now that we have created our products, we will learn how to secure it. We will see two methods for this: Subscription Keys and the OAuth 2.0 standard.
 
 ### Subscription Key
------------
+
+---
 
 We will below how create the subscription keys.
 
@@ -478,7 +477,6 @@ We will below how create the subscription keys.
 1. On the APIM screen, in the menu on the left, click on `Subscriptions`, then click on `+ Add subscription`.
 
     ![image](/docs/assets/lab3/part3_1-step1.jpg)
-
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Name**: `Basic-Subscription`
@@ -506,7 +504,6 @@ Now that we have created two subscriptions, each corresponding to one of our pro
 
 We will know test our API with the subscription key.
 
-
 > Before continuing, go back to the `Settings` of your API and make sure the `Subscription required` checkbox is checked.
 
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
@@ -521,12 +518,13 @@ We will know test our API with the subscription key.
 
     ![image](/docs/assets/lab3/part3_1_ResultG.jpg)
 
-> ✅ The call is now successful with a 200 OK response. 
+> ✅ The call is now successful with a 200 OK response.
 
 </div>
 
 ### OAuth 2.0
------------
+
+---
 
 <div class="task" data-title="Task">
 
@@ -589,7 +587,6 @@ We will now see how to test our API securized by the OAuth 2.0 standard
 
 </div>
 
-
 <details>
 
 <summary> Toggle solution</summary>
@@ -603,7 +600,8 @@ TODO: provide solution
 In this final part of the lab, we will learn how to apply APIM policies to dynamically customize API behavior.
 
 ### Rate Limiting
------------
+
+---
 
 <div class="task" data-title="Task">
 
@@ -642,7 +640,8 @@ TODO: provide solution
 </details>
 
 ### Monetize API
------------
+
+---
 
 <div class="task" data-title="Task">
 
@@ -711,9 +710,6 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 <div class="tip" data-title="Tip">
 
 You can run another test to use up all your credit and observe the result.
-
-</div>
-
 
 </div>
 
