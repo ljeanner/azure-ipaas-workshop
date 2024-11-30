@@ -23,7 +23,7 @@ navigation_levels: 3
 
 ---
 
-# Build an event-driven data processing application using Azure iPaaS services
+# Introduction
 
 Welcome to this Azure iPaaS Workshop. You'll be experimenting with multiple integration services to build an event-driven data processing application.
 
@@ -34,7 +34,7 @@ During this workshop you will have the instructions to complete each steps. The 
 <div class="task" data-title="Task">
 
 > - You will find the instructions and expected configurations for each Lab step in these yellow **TASK** boxes.
-> - Log into your Azure subscription on the [Azure Portal][az-portal] using the credentials provided to you.
+> - Log into your Azure subscription on the [Azure Portal](https://portal.azure.com) using the credentials provided to you.
 
 </div>
 
@@ -89,15 +89,19 @@ Moreover, you some of the applications (e.g. Azure Functions) should also be dep
 
 TODO: describe how to check the above with a screenshot or a command line to run in GH codespaces
 
+![resources generated](assets/intro/azportal.png)
+
+![azd up command](assets/intro/azdup.png)
+
 </details>
 
 ---
 
-# 🚀 Lab 1 : Process and Transform a file (1 hour)
+# Lab 1 : Process and Transform a file (1 hour)
 
 For this first lab, you will focus on the following scope :
 
-![alt text](assets/lab1/image.png)
+![Global process](assets/lab1/image.png)
 
 ## Detect a file upload event (15 min)
 
@@ -127,7 +131,7 @@ Serverless is all about designing the application around event-driven architectu
 
 Event Grid is an event broker that you can use to integrate applications while subscribing to event sources. These events are delivered through Event Grid to subscribers such as applications, Azure services, or any accessible endpoint. Azure services, First and Third-party SaaS services as well as custom applications can be the source of these events.
 
-### 🚀 Check Logic App permission to access Event Grid
+### Check Logic App permission to access Event Grid
 
 Event Grid enables event-driven automation by reacting to changes in Azure resources, such as triggering workflows or functions when a blob is uploaded to Azure Blob Storage.
 This simplifies integration and real-time processing across services without constant polling.
@@ -147,9 +151,9 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 You should see the following RBAC configuration in your Storage Account :
 
-![alt text](assets/lab1/image-1.png)
+![IAM](assets/lab1/image-1.png)
 
-### 🚀 Check the Event Grid trigger in Logic App
+### Check the Event Grid trigger in Logic App
 
 Next step is to actually trigger the Logic App `loahandsonlabinoday01` based on the event raised by your Event Grid System Topic when a file is uploaded to the `input` container.
 
@@ -179,7 +183,7 @@ You should see the following configuration in your trigger :
 
 ![alt text](assets/lab1/image-2.png)
 
-### 🚀 Check the Event Grid subscription in the Event Grid System Topic
+### Check the Event Grid subscription in the Event Grid System Topic
 
 When we save the workflow for the first time, an Event Grid subscription will be created in the Storage Account automatically with some default naming convention, and it will be in 'Creating' state.
 We will see in the next step why and how to validate the subscription.
@@ -210,7 +214,7 @@ You should see the following configurations in Event Grid Subscription :
 
 ![alt text](assets/lab1/image-9.png)
 
-### 🚀 Check the Webhook validation condition
+### Check the Webhook validation condition
 
 After the event is received, we add an action to parse the json event with the event grid schema. We can get the schema from [here](https://learn.microsoft.com/en-us/azure/event-grid/event-schema#event-schema).
 The input to Parse JSON step is :
@@ -234,7 +238,7 @@ You should see the following configuration in your trigger :
 
 ## Process the event (5 min)
 
-### 🚀 Check Logic App permission to access Storage Account
+### Check Logic App permission to access Storage Account
 
 The Storage Account is used to store data objects, including blobs, file shares, queues, tables, and disks. In our lab, it is used to store the sample flight booking JSON file inside an `input` container.
 
@@ -255,7 +259,7 @@ You should see the following RBAC configuration in your Storage Account :
 
 ![alt text](assets/lab1/image-3.png)
 
-### 🚀 Retrieve file content
+### Retrieve file content
 
 To retrieve the content of the file that will be uploaded in the `input` container, we are using the `Azure Blob Storage` connector and `Read blob content` action.
 
@@ -294,7 +298,7 @@ This approach is well-suited for systems requiring loose coupling between compon
 Azure Service Bus is a good solution for implementing the Publish/Subscribe pattern as it provides robust messaging capabilities, including topic-based subscriptions, reliable message delivery, and support for diverse protocols and platforms.
 Its built-in features, such as message filtering, dead-letter queues, and transactional processing, make it ideal for building scalable, decoupled, and fault-tolerant systems.
 
-### 🚀 Check Logic App permission to access Service Bus
+### Check Logic App permission to access Service Bus
 
 The Logic App needs to access the Service Bus to publish the message (content of the file). Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Service Bus.
 
@@ -312,7 +316,7 @@ You should see the following RBAC configuration in your Service Bus Namespace :
 
 ![alt text](assets/lab1/image-7.png)
 
-### 🚀 Check the action to Publish the message to Service Bus
+### Check the action to Publish the message to Service Bus
 
 Next step is to publish the message (i.e. content of the file) in the Service Bus topic `topic-flighbooking`.
 To do that, we are using the `Service Bus` connector and `Send message to a queue or topic` action.
@@ -342,7 +346,7 @@ The next section will focus on the subscription to this message and its processi
 Next step is to retrieve the message from the Service Bus in order to process it later. In the Pub/Sub pattern previously explained, this is the Subscription part.
 We will build a workflow that will be triggered when a new message is available in the dedicated Service Bus subscription, containing our message.
 
-### 🚀 Configure the Service Bus trigger in Logic App
+### Configure the Service Bus trigger in Logic App
 
 In this step, will will configure the Logic App `Service Bus` connector and trigger `When messages are available in a topic`.
 As the Service Bus connection configuration is already done, we will focus on the creation and configuration of the trigger itself.
@@ -380,7 +384,7 @@ In Logic Apps, you can transform messages using built-in connectors (e.g., JSON,
 Additionally, Logic Apps supports external tools like Azure API Management for preprocessing.
 [Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
 
-### 🚀 Configure the transform action in Logic App
+### Configure the transform action in Logic App
 
 We need to transform the initial message to a simplified format that is expected by the target system.
 By consolidating passenger names into a list and focusing on key flight and payment details, we make the data more compact and easier for the target system to process.
@@ -475,7 +479,7 @@ Once the message has been transformed to match the format of the target system, 
 Azure Cosmos DB is a fully managed NoSQL database which offers Geo-redundancy and multi-region write capabilities.
 It currently supports NoSQL, MongoDB, Cassandra, Gremlin, Table and PostgreSQL APIs and offers a serverless option which is perfect for our use case.
 
-### 🚀 Retrieve Cosmos DB Shared Access Key
+### Retrieve Cosmos DB Shared Access Key
 
 To use the Cosmos DB connector in our Logic App workflow and write to the Cosmos DB container, you can use the Shared Access Key for authentication.
 This key grants the Logic App access to the Cosmos DB account and allows it to perform the required operations.
@@ -495,7 +499,7 @@ We will now see how to retrieve this key for integration into our configuration.
 
 ![alt text](assets/lab1/image-17.png)
 
-### 🚀 Store data to Cosmos DB
+### Store data to Cosmos DB
 
 Now we can add the last step of the Logic App flow that will store the transformed message in the Cosmos DB database using the Create or update document V3 operation.
 First, we need to configure the connection to our CosmosDB account.
@@ -559,7 +563,7 @@ The action should look like this :
 
 We are now ready to test our workflow.
 
-### 🚀 Check the message stored in the CosmosDB
+### Check the message stored in the CosmosDB
 
 First, let's upload a new file to the `flightbookings` container of the `cdbhandsonlabinoday01` Storage Account to simulate a booking.
 You can download the JSON file from here: [Download sample JSON file](assets/sample_flightbooking.json)
@@ -845,7 +849,7 @@ TODO: describe how to get the url of the function and how to call it
 
 </details>
 
-## Lab 2 : Summary
+## Summary
 
 TODO: describe what the attendee has learned in this lab sync and async flows with functions and service bus.
 
@@ -857,11 +861,9 @@ For this Lab, we will focus on the following scope :
 
 ![image](/docs/assets/lab3/lab3-scope.jpg)
 
-## 🚀 Part 1 : Expose an API (5 minutes)
+## Expose an API (5 minutes)
 
 In this first step, we will learn how to expose an API on Azure APIM. We will publish the API to fetch orders deployed in Lab 2.
-
-<div class="task" data-title="Task">
 
 1. Go the Azure APIM `ApimName`
 2. On the left pane click on `APIS`
@@ -888,12 +890,9 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 
 ✅ **Now the API is ready.**
 
-<div class="task" data-title="Task">
 
 > Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
 >![image](/docs/assets/lab3/part1.jpg)
-
-</div>
 
 </div>
 
@@ -905,11 +904,9 @@ TODO: provide solution
 
 </details>
 
-## 🚀 Part 2 : Manage your API with Product (5 minutes)
+## Manage your API with Product (5 minutes)
 
 Now the API is published, we will learn how to create a **Product** we will use to manage access and define usage plans.
-
-<div class="task" data-title="Task">
 
 1. On the APIM screen, in the menu on the left, click on `Products`, then click on `+ Add`.
 
@@ -937,8 +934,6 @@ Now the API is published, we will learn how to create a **Product** we will use 
 
 7. Repeat steps 1 to 6 to create another product named `Premium`
 
-</div>
-
 <details>
 
 <summary> Toggle solution</summary>
@@ -947,17 +942,13 @@ TODO: provide solution
 
 </details>
 
-## 🚀 Part 3 : Securize your API (15 minutes)
+## Securize your API (15 minutes)
 
 Now that we have created our products, we will learn how to secure it. We will see two methods for this: Subscription Keys and the OAuth 2.0 standard.
 
 ### Subscription Key
 
----
-
 We will below how create the subscription keys.
-
-<div class="task" data-title="Task">
 
 1. On the APIM screen, in the menu on the left, click on `Subscriptions`, then click on `+ Add subscription`.
 
@@ -983,13 +974,11 @@ Now that we have created two subscriptions, each corresponding to one of our pro
 
 > Be sure to note down the values of your keys to use them in the tests we will perform.
 
-</div>
-
-<div class="task" data-title="Task">
-
 We will know test our API with the subscription key.
 
+<div class="tip" data-title="Tips">
 > Before continuing, go back to the `Settings` of your API and make sure the `Subscription required` checkbox is checked.
+</div>
 
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Next, click on the `Test` tab and copy the value under `Request URL`.
@@ -1005,13 +994,7 @@ We will know test our API with the subscription key.
 
 > ✅ The call is now successful with a 200 OK response.
 
-</div>
-
 ### OAuth 2.0
-
----
-
-<div class="task" data-title="Task">
 
 We will now see how to securize our API with the OAuth 2.0 standard
 
@@ -1033,11 +1016,8 @@ We will now see how to securize our API with the OAuth 2.0 standard
         </validate-jwt>
 
 ```
+
   ![image](/docs/assets/lab3/part3_2-step3.jpg)
-
-</div>
-
-<div class="task" data-title="Task">
 
 We will now see how to test our API securized by the OAuth 2.0 standard
 
@@ -1070,8 +1050,6 @@ We will now see how to test our API securized by the OAuth 2.0 standard
 
 > ✅ The Orders API is now secured using the OAuth 2.0 framework!
 
-</div>
-
 <details>
 
 <summary> Toggle solution</summary>
@@ -1080,15 +1058,11 @@ TODO: provide solution
 
 </details>
 
-## 🚀 Part 4 : Change the behaviour of your API with APIM Policies (15 minutes)
+## Change the behaviour of your API with APIM Policies (15 minutes)
 
 In this final part of the lab, we will learn how to apply APIM policies to dynamically customize API behavior.
 
 ### Rate Limiting
-
----
-
-<div class="task" data-title="Task">
 
 To begin, we will set a limit for the Basic user to ensure they cannot call our API more than 5 times per minute.
 
@@ -1114,8 +1088,6 @@ To begin, we will set a limit for the Basic user to ensure they cannot call our 
 
 >💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
 
-</div>
-
 <details>
 
 <summary> Toggle solution</summary>
@@ -1125,10 +1097,6 @@ TODO: provide solution
 </details>
 
 ### Monetize API
-
----
-
-<div class="task" data-title="Task">
 
 To conclude, we will simulate the monetization of an API using a custom policy that we will now implement.
 
@@ -1196,8 +1164,6 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 
 You can run another test to use up all your credit and observe the result.
 
-</div>
-
 <details>
 
 <summary> Toggle solution</summary>
@@ -1206,7 +1172,7 @@ TODO: provide solution
 
 </details>
 
-## Lab 3 : Summary
+## Summary
 
 In this lab, we learn how to use Azure APIM in a four-step process:
 
