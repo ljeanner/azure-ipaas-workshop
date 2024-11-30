@@ -68,6 +68,7 @@ The Logic App needs to access the Event Grid service through the Storage Account
 <div class="task" data-title="Tasks">
 
 > Check that correct RBAC configuration is applied in the Storage Account:
+>
 >- Navigate to the Storage Account `sahandsonlabinoday01`.
 >- In the left-hand menu, click on `Access Control (IAM)`.
 >- From the top-menu bar, click on Role Assignment and check that Logic App `loahandsonlabinoday01` has the **Event Grid Contributor** role.
@@ -94,6 +95,7 @@ It comes with one action "When a resource event occurs", that is triggered when 
 <div class="task" data-title="Tasks">
 
 > Check the configuration of the Event Grid trigger:
+>
 >- Navigate to the Logic App `loahandsonlabinoday01`.
 >- In the left-hand menu, click on `Workflows` from the `Workflows` section.
 >- Open the workflow `wf_flightbooking_from_sa_to_sb`.
@@ -116,6 +118,7 @@ In the meatime, let's have a look to the Event Grid subscription.
 <div class="task" data-title="Tasks">
 
 > Check the configuration of the Event Grid subscription in the Storage Account:
+>
 >- Navigate to the Storage Account `sahandsonlabinoday01`.
 >- In the left-hand menu, click on Events.
 
@@ -128,6 +131,7 @@ You should see the following configurations in Event Grid Subscription :
 <div class="task" data-title="Tasks">
 
 > Check the configuration of the Event Grid subscription in the Storage Account:
+>
 >- Click on the name of the Subscription on the bottom of the page.
 
 </div>
@@ -170,6 +174,7 @@ Since we want to use Managed Identities to secure the connection between our Azu
 <div class="task" data-title="Tasks">
 
 > Check that correct RBAC configuration is applied in the Storage Account:
+>
 >- Navigate to the Storage Account `sahandsonlabinoday01`.
 >- In the left-hand menu, click on `Access Control (IAM)`.
 >- From the top-menu bar, click on Role Assignment and check that Logic App `loahandsonlabinoday01` has the **Storage Blob Data Contributor** role.
@@ -187,6 +192,7 @@ To retrieve the content of the file that will be uploaded in the `input` contain
 <div class="task" data-title="Tasks">
 
 > Check the configuration of the `Read blob content` action:
+>
 >- Navigate to the Logic App `loahandsonlabinoday01`.
 >- In the left-hand menu, click on `Workflows` from the `Workflows` section.
 >- Open the workflow `wf_flightbooking_from_sa_to_sb`.
@@ -225,6 +231,7 @@ The Logic App needs to access the Service Bus to publish the message (content of
 <div class="task" data-title="Tasks">
 
 > Check that correct RBAC configuration is applied in the Service Bus:
+>
 >- Navigate to the Service Bus `sbhandsonlabinoday01`.
 >- In the left-hand menu, click on `Access Control (IAM)`.
 >- From the top-menu bar, click on Role Assignment and check that Logic App `loahandsonlabinoday01` has the **Service Bus Data Receiver** and **Service Bus Data Sender** roles.
@@ -243,6 +250,7 @@ To do that, we are using the `Service Bus` connector and `Send message to a queu
 <div class="task" data-title="Tasks">
 
 > Check the configuration of the `Send message to a queue or topic` action:
+>
 >- Navigate to the Logic App `loahandsonlabinoday01`.
 >- In the left-hand menu, click on `Workflows` from the `Workflows` section.
 >- Open the workflow `wf_flightbooking_from_sa_to_sb`.
@@ -272,6 +280,7 @@ As the Service Bus connection configuration is already done, we will focus on th
 <div class="task" data-title="Tasks">
 
 > Create and configure the Service Bus trigger :
+>
 >- Navigate to the Logic App `loahandsonlabinoday01`.
 >- In the left-hand menu, click on `Workflows` from the `Workflows` section.
 >- Open the workflow `wf_flightbooking_from_sb_to_cdb`.
@@ -338,6 +347,7 @@ We will use a `Compose` action with a function to transform the JSON message int
 <div class="task" data-title="Tasks">
 
 > Configure a `Compose` action with a function to transform JSON into XML:
+>
 >- Navigate to the Logic App `loahandsonlabinoday01`.
 >- In the left-hand menu, click on `Workflows` from the `Workflows` section.
 >- Open the workflow `wf_flightbooking_from_sb_to_cdb`.
@@ -358,6 +368,7 @@ We will then use a `Transform XML` action to transform the XML message into the 
 <div class="task" data-title="Tasks">
 
 > Configure a `Transform XML` action using an XSLT file:
+>
 >- Click on the `+` button, select `Add an action` and search for `Transform XML` from the list of actions.
 >- In the Content field, enter the following text: `outputs('JSON_to_XML')`.
 >- In the Map Source dropdown list, select `LogicApp`.
@@ -376,6 +387,7 @@ We will now use a `Compose` action with a function to transform the XML transfor
 <div class="task" data-title="Tasks">
 
 > Configure a `Compose` action with a function to transform JSON into XML:
+>
 >- Click on the `+` button, select `Add an action` and search for `Compose` from the list of actions.
 >- In the Inputs field of the Compose action, enter the following function: `json(body('Transform_XML'))`.
 >- Rename the action `XML to JSON`
@@ -402,6 +414,7 @@ We will now see how to retrieve this key for integration into our configuration.
 <div class="task" data-title="Tasks">
 
 > Retrieve the Cosmos DB Shared Access Key:
+>
 >- Navigate to the Cosmos DB account `cdbhandsonlabinoday01`.
 >- In the left-hand menu, click on Keys under the Settings section.
 >- In the Keys section, locate the Primary Key.
@@ -420,6 +433,7 @@ First, we need to configure the connection to our CosmosDB account.
 <div class="task" data-title="Tasks">
 
 > Configure the connection to CosmosDB for using the `Create or update document (V3)` connector:
+>
 >- Navigate to the Logic App `loahandsonlabinoday01`.
 >- In the left-hand menu, click on `Workflows` from the `Workflows` section.
 >- Open the workflow `wf_flightbooking_from_sb_to_cdb`.
@@ -441,6 +455,7 @@ We will use a `Compose` action to generate a unique identifier and append an `id
 <div class="task" data-title="Tasks">
 
 > Configure a `Compose` action to generate a UUID and append the id property:
+>
 >- Click on the `+` button, select `Add an action` and search for `Compose`.
 >- In the Inputs textbox, click on the `fx` icon and enter the following text : `addProperty(outputs('XML_to_JSON'), 'id', guid())`
 >- Rename the action `Append id property and generate UUID`
@@ -458,6 +473,7 @@ To do so, we need to configure our `Create or update document (V3)` connector.
 <div class="task" data-title="Tasks">
 
 > Configure the `Create or update document (V3)` action to create a new document in CosmosDB:
+>
 >- In the Database Id textbox, enter the following text : `handsonlab`
 >- In the Container Id textbox, enter the following text : `items`
 >- In the Item textbox, click on the `lightning` button and select `Outputs` from the previous action `Append id property and generate UUID`
@@ -480,7 +496,8 @@ You can download the JSON file from here: [Download sample JSON file](assets/sam
 
 <div class="task" data-title="Tasks">
 
-> Upload the file in the Storage Account :
+> Upload the file in the Storage Account:
+>
 >- Navigate to the Storage Account `sahandsonlabinoday01`.
 >- In the left-hand menu, click on `Storage browser` and select `Blob containers`.
 >- Click on the `input` container.
@@ -497,7 +514,8 @@ Finally, let's check if our message is stored in our CosmosDB container.
 
 <div class="task" data-title="Tasks">
 
-> Check the document created in CosmosDB 
+> Check the document created in CosmosDB
+>
 >- Navigate to the Cosmos DB account `cdbhandsonlabinoday01`.
 >- In the left-hand menu, click on `Data explorer` and click on `handsonlab` to open the database
 >- Click on `flightbookings` to open the container
