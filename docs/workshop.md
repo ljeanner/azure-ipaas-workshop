@@ -68,7 +68,6 @@ azd up
 
 </details>
 
-
 ### Validate the setup on Azure
 
 The provisioning step may take few minutes. Once it finishes you should have a resource group containing all resources needed in this workshop.
@@ -372,7 +371,7 @@ TODO: describe what the attendee has learned in this lab sync and async flows wi
 
 For this Lab, we will focus on the following scope :
 
-![image](/docs/assets/24ba989b-5d4c-4bb6-9f9b-ec9a1175b8f0.jpg)
+![image](/docs/assets/lab3-scope.jpg)
 
 ## 🚀 Part 1 : Expose an API (5 minutes)
 
@@ -598,7 +597,6 @@ We will now see how to test our API securized by the OAuth 2.0 standard
 TODO: provide solution
 
 </details>
-
 
 ## 🚀 Part 4 : Change the behaviour of your API with APIM Policies (15 minutes)
 
