@@ -38,21 +38,42 @@ During this workshop you will have the instructions to complete each steps. The 
 
 </div>
 
-TODO: describe a business scenarion around order processing
+TODO: describe a business scenario around order processing
 
 ## Tooling and services
 
-TODO: provide a 1-line description for iPaaS services + azd + codespaces
+- **iPaaS services**: Enable seamless integration of applications and data across different environments.
+  
+TODO, j'aime pas la description de Ipaas
+  
+- **azd** (Azure Developer CLI): `azd` is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
+- **GitHub Codespace**: GitHub Codespaces provides a cloud-based development environment that allows you to code, build, test, and collaborate from anywhere. It offers a fully configured development environment that can be accessed directly from your browser or through Visual Studio Code. With Codespaces, you can quickly spin up a development environment with all the necessary tools and dependencies, ensuring a consistent setup across your team.
 
 ## Prepare your dev environment
 
-TODO: describe how to fork the project, start Github Codespaces, and log into Azure via azd.
+<div class="task" data-title="Task">
+You have a fork the GitHub project in order to have you own copy that you can keep and edit. You could clone it locally but we will leverage GitHub Codespaces
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+1- Open a browser and go the [lab repository](https://github.com/ikhemissi/azure-ipaas-workshop/)
+
+2- Click on `Code`, then `Codespaces` and on the button `Create codespace on main`.
+![Create codespace](assets/intro/codespace.png)
+
+3- It should open a new tab in your browser with a full editor and a terminal from where you are going to continue the lab. It can take few minutes because Codespace create a container (kind of virtual machine) and installs a lot of tools on it
+![Codespace editor](assets/intro/codespace2.png)
+</details>
 
 ### Provision resources in Azure
 
 <div class="task" data-title="Task">
 
-> - Use `azd` to provision resources in Azure and deploy provided applications
+> - Use `azd` to provision resources in Azure and deploy provided applications. You can use the `azd up` command, once logged in to Azure in your terminal.
 
 </div>
 
@@ -87,11 +108,12 @@ Moreover, you some of the applications (e.g. Azure Functions) should also be dep
 
 <summary> Toggle solution</summary>
 
-TODO: describe how to check the above with a screenshot or a command line to run in GH codespaces
+You terminal should show green messages such as:
+![azd up command](assets/intro/azdup.png)
+
+In the Azure portal, you should have a new usergroup with a lot of sub resources inside it.
 
 ![resources generated](assets/intro/azportal.png)
-
-![azd up command](assets/intro/azdup.png)
 
 </details>
 
