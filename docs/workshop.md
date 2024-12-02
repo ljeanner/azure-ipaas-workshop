@@ -1062,7 +1062,7 @@ Now the API is published, we will learn how to create a **Product** we will use 
 
 1. On the APIM screen, in the menu on the left, click on `Products`, then click on `+ Add`.
 
-    ![image](assets/lab3/part2-step1.jpg)
+    ![Product](assets/lab3/part2-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Display name**: `Basic`
@@ -1071,26 +1071,32 @@ Now the API is published, we will learn how to create a **Product** we will use 
       - `Published`
       - `Requires Subscription`
 
-    ![image](assets/lab3/part2-step2.jpg)
+    ![ProductCreation](assets/lab3/part2-step2.jpg)
 
 3. Select the created product from the list and click on it.
 
 4. On the next screen, click on `+ Add API`. In the right-hand menu that appears, select the API `Orders API` (the one create on the step 1) and then click `Select`.
 
-    ![image](assets/lab3/part2-step4.jpg)
+    ![ProductAddAPI](assets/lab3/part2-step4.jpg)
 
 5. Select `Access control` from the menu on the left.
-6. Click on `+ Add group`, then in the right-hand menu, select Developers before clicking on `Select`.
+6. Click on `+ Add group`, then in the right-hand menu, select `Developers` before clicking on `Select`.
 
-    ![image](assets/lab3/part2-step6.jpg)
+    ![ProductAddGroup](assets/lab3/part2-step6.jpg)
 
-7. Repeat steps 1 to 6 to create another product named `Premium`
+
+<div class="task" data-title="Task">
+
+> - Create a product named `Premium`, link it to the `Orders API`, and enable access control for the `Developers` group.
+
+</div>
+
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+> Repeat steps 1 to 6 to create another product named `Premium`
 
 </details>
 
@@ -1104,7 +1110,7 @@ We will below how create the subscription keys.
 
 1. On the APIM screen, in the menu on the left, click on `Subscriptions`, then click on `+ Add subscription`.
 
-    ![image](assets/lab3/part3_1-step1.jpg)
+    ![Subscription](assets/lab3/part3_1-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Name**: `Basic-Subscription`
@@ -1112,7 +1118,7 @@ We will below how create the subscription keys.
     - **Scope**: `Product`
     - **Product**: `Basic`
 
-    ![image](assets/lab3/part3_1-step2.jpg)
+    ![CreateSubscription](assets/lab3/part3_1-step2.jpg)
 
 3. For the purpose of the part 4, repeat steps 1 and 2 to create another subscription linked to the product `Premium`, with the following fields value :
     - **Name**: `Premium-Subscription`
@@ -1122,23 +1128,36 @@ We will below how create the subscription keys.
 
 Now that we have created two subscriptions, each corresponding to one of our products, we can view their values by right-clicking on them and selecting `Show/hide keys`
 
-![image](assets/lab3/part3_1.jpg)
+![CreateSubscription2](assets/lab3/part3_1.jpg)
 
 > Be sure to note down the values of your keys to use them in the tests we will perform.
 
 We will know test our API with the subscription key.
 
 <div class="tip" data-title="Tips">
+
 > Before continuing, go back to the `Settings` of your API and make sure the `Subscription required` checkbox is checked.
+
 </div>
+
+<div class="task" data-title="Task">
 
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Next, click on the `Test` tab and copy the value under `Request URL`.
 3. Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
 
-    ![image](assets/lab3/part3_1_ResultF.jpg)
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+![SubscriptionResultFailed](assets/lab3/part3_1_ResultF.jpg)
 
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
+
+
+</details>
 
 4. In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
 
