@@ -1148,6 +1148,8 @@ We will know test our API with the subscription key.
 
 </div>
 
+<details>
+
 <summary> Toggle solution</summary>
 
 ![SubscriptionResultFailed](assets/lab3/part3_1_ResultF.jpg)
