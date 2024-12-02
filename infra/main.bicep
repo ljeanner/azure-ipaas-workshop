@@ -172,7 +172,11 @@ module dataProcessingLogicApp './logicapp.bicep' = {
     appName: 'loa-proc-${resourceSuffixKebabcase}'
     applicationInsightsName: applicationInsights.outputs.name
     storageAccountName: storageAccountLogicApp.outputs.name
+    storageAccountDataName: storageAccountData.outputs.name
+    serviceBusFqdn: servicebus.outputs.fullyQualifiedNamespace
     storageAccountConnectionString: storageAccountLogicApp.outputs.storageConnectionString
+    resourceGroupName: resourceGroup.name
+    subscriptionId: subscription().id
     tags: tags
   }
 }
