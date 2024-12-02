@@ -1014,6 +1014,8 @@ Open the function in the Azure portal and click on `Get function URL`. A side pa
 
 In this lab, you learned how to process and fetch orders using Azure Functions and Service Bus. You implemented asynchronous order processing to improve performance and resiliency, leveraging Service Bus for reliable communication and automatic retries. Additionally, you created an HTTP endpoint to fetch the latest processed orders from CosmosDB, demonstrating how to build event-driven and API-based workflows with Azure services.
 
+---
+
 # Lab 3 : Exposing and monetizing APIs (45m)
 
 For this Lab, we will focus on the following scope :
