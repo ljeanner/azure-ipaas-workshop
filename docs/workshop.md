@@ -157,13 +157,13 @@ Event Grid is an event broker that you can use to integrate applications while s
 
 Event Grid enables event-driven automation by reacting to changes in Azure resources, such as triggering workflows or functions when a blob is uploaded to Azure Blob Storage.
 This simplifies integration and real-time processing across services without constant polling.
-You will use it to trigger the Logic App workflow `wf_flightbooking_from_sa_to_sb` when a blob is uploaded in the `input` container of the Storage Account.
+You will use it to trigger the Logic App workflow `wf_flightbooking_from_sa_to_sb` when a blob is uploaded in the `inputfiles` container of the Storage Account.
 
 The Logic App needs to access the Event Grid service through the Storage Account as it will create an Event Grid System Topic when the Event Grid trigger connector is created. Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Storage Account.
 
 <div class="task" data-title="Tasks">
 
->- Check that correct RBAC configuration is applied in the Storage Account `sahandsonlabinoday01`.
+>- Check that correct RBAC configuration is applied in the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -171,7 +171,7 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `sahandsonlabinoday01`.
+>- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
 >- In the left-hand menu, click on `Access Control (IAM)`.
 >- From the top-menu bar, click on Role Assignment and check that Logic App `loahandsonlabinoday01` has the **Event Grid Contributor** role.
 
@@ -183,7 +183,7 @@ You should see the following RBAC configuration in your Storage Account :
 
 ### Check the Event Grid trigger in Logic App
 
-Next step is to actually trigger the Logic App `loahandsonlabinoday01` based on the event raised by your Event Grid System Topic when a file is uploaded to the `input` container.
+Next step is to actually trigger the Logic App `loahandsonlabinoday01` based on the event raised by your Event Grid System Topic when a file is uploaded to the `inputfiles` container.
 
 Azure Logic Apps offers different components which can be used to define the steps of a flow as a chain of actions and controls. Here are the main ones :
 
@@ -225,7 +225,7 @@ In the meatime, let's have a look to the Event Grid subscription.
 
 <div class="task" data-title="Tasks">
 
->- Check the configuration of the Event Grid subscription in the Storage Account `sahandsonlabinoday01`.
+>- Check the configuration of the Event Grid subscription in the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -233,7 +233,7 @@ In the meatime, let's have a look to the Event Grid subscription.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `sahandsonlabinoday01`.
+>- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
 >- In the left-hand menu, click on Events.
 
 You should see the following configurations in Event Grid Subscription :
@@ -244,7 +244,7 @@ You should see the following configurations in Event Grid Subscription :
 
 <div class="task" data-title="Tasks">
 
-> Check the configuration of the Event Grid subscription in the Storage Account `sahandsonlabinoday01`.
+> Check the configuration of the Event Grid subscription in the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -304,14 +304,14 @@ You should see the following configuration in your Condition :
 
 ### Check Logic App permission to access Storage Account
 
-The Storage Account is used to store data objects, including blobs, file shares, queues, tables, and disks. In our lab, it is used to store the sample flight booking JSON file inside an `input` container.
+The Storage Account is used to store data objects, including blobs, file shares, queues, tables, and disks. In our lab, it is used to store the sample flight booking JSON file inside an `inputfiles` container.
 
 The Logic App needs to access the Storage Account to retrieve the JSON file, and for the Event Grid trigger connector to list the available Storage Accounts in the Subscription.
 Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Storage Account.
 
 <div class="task" data-title="Tasks">
 
->- Check that correct RBAC configuration is applied in the Storage Account `sahandsonlabinoday01`:
+>- Check that correct RBAC configuration is applied in the Storage Account `stdatalabnoipa[randomid]`:
 
 </div>
 
@@ -319,7 +319,7 @@ Since we want to use Managed Identities to secure the connection between our Azu
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `sahandsonlabinoday01`.
+>- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
 >- In the left-hand menu, click on `Access Control (IAM)`.
 >- From the top-menu bar, click on Role Assignment and check that Logic App `loahandsonlabinoday01` has the **Storage Blob Data Contributor** role.
 
@@ -331,7 +331,7 @@ You should see the following RBAC configuration in your Storage Account :
 
 ### Retrieve file content
 
-To retrieve the content of the file that will be uploaded in the `input` container, we are using the `Azure Blob Storage` connector and `Read blob content` action.
+To retrieve the content of the file that will be uploaded in the `inputfiles` container, we are using the `Azure Blob Storage` connector and `Read blob content` action.
 
 <div class="task" data-title="Tasks">
 
@@ -348,7 +348,7 @@ To retrieve the content of the file that will be uploaded in the `input` contain
 >- Open the workflow `wf_flightbooking_from_sa_to_sb`.
 >- In the left-hand menu, click on `Designer` from the `Developer` section.
 >- Click on the action `Read blob content`.
->- Make sure that the Container Name is set to `input` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
+>- Make sure that the Container Name is set to `inputfiles` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
 
 You should see the following configuration in your action :
 
@@ -380,7 +380,7 @@ The Logic App needs to access the Service Bus to publish the message (content of
 
 <div class="task" data-title="Tasks">
 
->- Check that correct RBAC configuration is applied in the Service Bus `sbhandsonlabinoday01`:
+>- Check that correct RBAC configuration is applied in the Service Bus `sb-lab-no-ipa-[randomid]`:
 
 </div>
 
@@ -388,7 +388,7 @@ The Logic App needs to access the Service Bus to publish the message (content of
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Service Bus `sbhandsonlabinoday01`.
+>- Navigate to the Service Bus `sb-lab-no-ipa-[randomid]`.
 >- In the left-hand menu, click on `Access Control (IAM)`.
 >- From the top-menu bar, click on Role Assignment and check that Logic App `loahandsonlabinoday01` has the **Service Bus Data Receiver** and **Service Bus Data Sender** roles.
 
@@ -418,7 +418,7 @@ To do that, we are using the `Service Bus` connector and `Send message to a queu
 >- Open the workflow `wf_flightbooking_from_sa_to_sb`.
 >- In the left-hand menu, click on `Designer` from the `Developer` section.
 >- Click on the action `Send message`.
->- Make sure that the Container Name is set to `input` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
+>- Make sure that the Container Name is set to `inputfiles` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
 
 You should see the following configuration in your action :
 
@@ -426,7 +426,7 @@ You should see the following configuration in your action :
 
 </details>
 
-At the end of this first section, we have a Logic App workflow that is triggered by an event when a new file is uploaded in the `input` container of our Storage Account, that reads the file content and publish it in a Service Bus topic.
+At the end of this first section, we have a Logic App workflow that is triggered by an event when a new file is uploaded in the `inputfiles` container of our Storage Account, that reads the file content and publish it in a Service Bus topic.
 The next section will focus on the subscription to this message and its processing, before sending it to the target system.
 
 ## Subscribe to the message (5 min)
@@ -599,7 +599,7 @@ We will now see how to retrieve this key for integration into our configuration.
 
 <div class="task" data-title="Tasks">
 
->- Retrieve the Cosmos DB Shared Access Key from `cdbhandsonlabinoday01` Cosmos DB account:
+>- Retrieve the Cosmos DB Shared Access Key from `cos-lab-no-ipa-[randomid]` Cosmos DB account:
 
 </div>
 
@@ -607,7 +607,7 @@ We will now see how to retrieve this key for integration into our configuration.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Cosmos DB account `cdbhandsonlabinoday01`.
+>- Navigate to the Cosmos DB account `cos-lab-no-ipa-[randomid]`.
 >- In the left-hand menu, click on Keys under the Settings section.
 >- In the Keys section, locate the Primary Key.
 >- Copy the Primary Key by clicking the copy icon next to it.
@@ -686,8 +686,8 @@ To do so, we need to configure our `Create or update document (V3)` connector.
 
 <summary> Toggle solution</summary>
 
->- In the Database Id textbox, enter the following text : `handsonlab`
->- In the Container Id textbox, enter the following text : `items`
+>- In the Database Id textbox, enter the following text : `orders`
+>- In the Container Id textbox, enter the following text : `processed`
 >- In the Item textbox, click on the `lightning` button and select `Outputs` from the previous action `Append id property and generate UUID`
 >- Once everything is set, click on the Save button on the top left corner.
 
@@ -703,12 +703,12 @@ We are now ready to test our workflow.
 
 ### Check the message stored in the CosmosDB
 
-First, let's upload a new file to the `flightbookings` container of the `cdbhandsonlabinoday01` Storage Account to simulate a booking.
+First, let's upload a new file to the `inputfiles` container of the `cos-lab-no-ipa-[randomid]` Storage Account to simulate a booking.
 You can download the JSON file from here: [Download sample JSON file](assets/sample_flightbooking.json)
 
 <div class="task" data-title="Tasks">
 
->- Upload the file in the Storage Account `sahandsonlabinoday01`.
+>- Upload the file in the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -716,9 +716,9 @@ You can download the JSON file from here: [Download sample JSON file](assets/sam
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `sahandsonlabinoday01`.
+>- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
 >- In the left-hand menu, click on `Storage browser` and select `Blob containers`.
->- Click on the `input` container.
+>- Click on the `inputfiles` container.
 >- From the top-menu bar, click on the `Upload` button, click on `Browse for files` and select the `sample_flightbooking.json` file from your Storage Explorer.
 >- Click on the `Upload` button below.
 
@@ -732,7 +732,7 @@ Finally, let's check if our message is stored in our CosmosDB container.
 
 <div class="task" data-title="Tasks">
 
->- Check the document created in CosmosDB `cdbhandsonlabinoday01`.
+>- Check the document created in CosmosDB `cos-lab-no-ipa-[randomid]`.
 
 </div>
 
@@ -740,12 +740,12 @@ Finally, let's check if our message is stored in our CosmosDB container.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Cosmos DB account `cdbhandsonlabinoday01`.
->- In the left-hand menu, click on `Data explorer` and click on `handsonlab` to open the database
->- Click on `flightbookings` to open the container
+>- Navigate to the Cosmos DB account `cos-lab-no-ipa-[randomid]`.
+>- In the left-hand menu, click on `Data explorer` and click on `orders` to open the database
+>- Click on `toprocess` to open the container
 >- Click on `Items` and select the first line
 
-You should see your transformed message in the `flightbookings` container:
+You should see your transformed message in the `toprocess` container:
 
 ![CosmosDB Container](assets/lab1/image-20.png)
 
