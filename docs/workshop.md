@@ -487,7 +487,8 @@ We need to transform the initial message to a simplified format that is expected
 By consolidating passenger names into a list and focusing on key flight and payment details, we make the data more compact and easier for the target system to process.
 
 This is the message expected by the target system:
-`
+
+```json
 {
     "transformedBooking": {
         "bookingId": "B12345678",
@@ -509,7 +510,8 @@ This is the message expected by the target system:
         }
     }
 }
-`
+```
+
 We need to transform the message from JSON to XML because XSLT is designed to operate on XML data.
 Since XSLT requires XML as input to perform transformations, converting the JSON message into XML format allows us to leverage XSLTs powerful capabilities to manipulate and restructure the data as needed for the target system.
 
@@ -1008,7 +1010,7 @@ Open the function in the Azure portal and click on `Get function URL`. A side pa
 
 </details>
 
-## Summary
+## Summary Lab 2
 
 In this lab, you learned how to process and fetch orders using Azure Functions and Service Bus. You implemented asynchronous order processing to improve performance and resiliency, leveraging Service Bus for reliable communication and automatic retries. Additionally, you created an HTTP endpoint to fetch the latest processed orders from CosmosDB, demonstrating how to build event-driven and API-based workflows with Azure services.
 
@@ -1325,6 +1327,8 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 
 You can run another test to use up all your credit and observe the result.
 
+</div>
+
 <details>
 
 <summary> Toggle solution</summary>
@@ -1333,7 +1337,7 @@ TODO: provide solution
 
 </details>
 
-## Summary
+## Summary Lab 3
 
 In this lab, we learn how to use Azure APIM in a four-step process:
 
