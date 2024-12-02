@@ -1142,9 +1142,9 @@ We will know test our API with the subscription key.
 
 <div class="task" data-title="Task">
 
-1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
-2. Next, click on the `Test` tab and copy the value under `Request URL`.
-3. Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
+> 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
+> 2. Next, click on the `Test` tab and copy the value under `Request URL`.
+> 3. Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
 
 </div>
 
@@ -1152,8 +1152,8 @@ We will know test our API with the subscription key.
 
 <summary> Toggle solution</summary>
 
-![SubscriptionResultFailed](assets/lab3/part3_1_ResultF.jpg)
-
+>![SubscriptionResultFailed](assets/lab3/part3_1_ResultF.jpg)
+>
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
 
 
