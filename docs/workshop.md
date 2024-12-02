@@ -13,7 +13,7 @@ authors: # Required. You can add as many authors as needed
   - Louis-Guillaume Morand
   
 contacts: # Required. Must match the number of authors
-  - "@gdaCellenza"
+  - "guillaume.david@cellenza.com"
   - "alexandre.dejacques@cellenza.com"
   - "@ikhemissi"
   - "@lgmorand"
@@ -1009,7 +1009,7 @@ TODO: describe what the attendee has learned in this lab sync and async flows wi
 
 For this Lab, we will focus on the following scope :
 
-![image](assets/lab3/lab3-scope.jpg)
+![Process](assets/lab3/lab3-scope.jpg)
 
 ## Expose an API (5 minutes)
 
@@ -1019,18 +1019,18 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 2. On the left pane click on `APIS`
 3. Then, click on `+ Add API` and on the group `Create from Azure resource` select the tile `Function App`
 
-    ![image](assets/lab3/part1-step3.jpg)
+    ![AddAPI](assets/lab3/part1-step3.jpg)
 
 4. In the window that opens :
-    1. For the field `Function App`, click on `Browse`
-    2. Then on the windows that opens :
-    3. On _Configure required settings_, click on `Select` and choose your **Function App**
+    - For the field `Function App`, click on `Browse`
+    - Then on the windows that opens :
+    - On _Configure required settings_, click on `Select` and choose your **Function App**
 
-        ![image](assets/lab3/part1-step4_2.jpg)
+        ![FunctionSettings](assets/lab3/part1-step4_2.jpg)
 
-    4. Be sure the function `FetchOrders` is select and click on `Select`
+    - Be sure the function `FetchOrders` is select and click on `Select`
 
-        ![image](assets/lab3/part1-step4_3.jpg)
+        ![FunctionSelection](assets/lab3/part1-step4_3.jpg)
 
 5. Replace the values for the fields with the following values :
       - **Display name**: `Orders API`
@@ -1040,17 +1040,19 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 
 ✅ **Now the API is ready.**
 
+<div class="task" data-title="Task">
 
-> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
->![image](assets/lab3/part1.jpg)
+> - Test the operation `FetchOrders` and make sure it returns the latest processed orders.
 
 </div>
+
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
+>![TestAPI](assets/lab3/part1.jpg)
 
 </details>
 
