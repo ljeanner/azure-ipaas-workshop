@@ -172,7 +172,11 @@ module dataProcessingLogicApp './logicapp.bicep' = {
     appName: 'loa-proc-${resourceSuffixKebabcase}'
     applicationInsightsName: applicationInsights.outputs.name
     storageAccountName: storageAccountLogicApp.outputs.name
+    storageAccountDataName: storageAccountData.outputs.name
+    serviceBusFqdn: servicebus.outputs.fullyQualifiedNamespace
     storageAccountConnectionString: storageAccountLogicApp.outputs.storageConnectionString
+    resourceGroupName: resourceGroup.name
+    subscriptionId: subscription().id
     tags: tags
   }
 }
@@ -216,8 +220,8 @@ module servicebus './servicebus.bicep' = {
   params: {
     serviceBusNamespaceName: 'sb-${resourceSuffixKebabcase}'
     serviceBusQueueName: 'orders'
-    serviceBusTopicName: 'topic-flighbooking'
-    serviceBusSubscriptionName: 'sub-flighbooking-cdb'
+    serviceBusTopicName: 'topic-orders'
+    serviceBusSubscriptionName: 'sub-orders-cdb'
     location: location
     tags: tags
   }
@@ -321,12 +325,12 @@ module servicebusDataReceiverAssignmentLogicApp './servicebus-role-assign.bicep'
   }
 }
 
-module eventGridContributorAssignmentLogicApp './storageaccount-role-assign.bicep' = {
+module eventGridContributorAssignmentLogicAppRg './resourcegroup-role-assign.bicep' = {
   scope: resourceGroup
-  name: 'eventGridContributorAssignmentLogicApp'
+  name: 'eventGridContributorAssignmentLogicAppRg'
   params: {
-    name: storageAccountData.outputs.name
-    roleDefinitionId: '1e241071-0855-49ea-94dc-649edcd759de' // Event grid contributor role
+    resourceGroupid: resourceGroup.id
+    roleDefinitionId: '1e241071-0855-49ea-94dc-649edcd759de' // Event grid contributor role 
     principalId: dataProcessingLogicApp.outputs.principalId
   }
 }
@@ -341,7 +345,6 @@ module blobStorageContributorAssignmentLogicApp './storageaccount-role-assign.bi
     principalId: dataProcessingLogicApp.outputs.principalId
   }
 }
-
 
 module monitoringMetricsPublisherOrderProcessingAssignment './appinsights-role-assign.bicep' = {
   scope: resourceGroup

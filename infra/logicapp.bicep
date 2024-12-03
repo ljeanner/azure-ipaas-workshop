@@ -2,8 +2,12 @@ param appName string
 param planName string
 param location string = resourceGroup().location
 param storageAccountName string
+param storageAccountDataName string
 param storageAccountConnectionString string
+param serviceBusFqdn string
 param applicationInsightsName string
+param resourceGroupName string
+param subscriptionId string
 param tags object = {}
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
@@ -12,6 +16,10 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
   name: storageAccountName
+}
+
+resource storageData 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
+  name: storageAccountDataName
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
@@ -25,6 +33,22 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   properties: {
     targetWorkerCount: 1
     targetWorkerSizeId: 0 // Corresponds to WS1
+  }
+  tags: tags
+}
+
+resource apiConnection 'Microsoft.Web/connections@2018-07-01-preview' = {
+  name: 'azureeventgrid'
+  location: location
+  kind: 'V2'
+  properties: {
+    displayName: 'co-eg-handsonlabinoday01'
+    api: {
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureeventgrid')
+      type: 'Microsoft.Web/locations/managedApis'
+    }
+    parameterValueType:'Alternative'
+    alternativeParameterValues:{}
   }
   tags: tags
 }
@@ -50,12 +74,28 @@ resource logicApp 'Microsoft.Web/sites@2022-09-01' = {
           value: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' 
         }
         { 
+          name: 'AzureBlob_blobStorageEndpoint'
+          value: storageData.properties.primaryEndpoints.blob
+        }
+        { 
+          name: 'serviceBus_fullyQualifiedNamespace'
+          value: serviceBusFqdn
+        }
+        { 
           name: 'AzureFunctionsJobHost__extensionBundle__version'
           value: '[1.*, 2.0.0)' 
         }
         {
-          name: 'AzureWebJobsStorage__accountName'
+          name: 'AzureWebJobsStorage'
           value: storageAccountConnectionString
+        }
+        {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet'
         }
         { 
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING' 
@@ -66,12 +106,28 @@ resource logicApp 'Microsoft.Web/sites@2022-09-01' = {
           value: toLower(appName) 
         }
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value : 'InstrumentationKey=${appInsights.properties.InstrumentationKey};IngestionEndpoint=https://${location}.in.applicationinsights.azure.com/;LiveEndpoint=https://${location}.livediagnostics.monitor.azure.com/'
         }
         {
-          name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: '1'
+          name: 'WEBSITE_NODE_DEFAULT_VERSION'
+          value: '~18'
+        }
+        { 
+          name: 'storageAccount_Name'
+          value: storageData.name
+        }
+        { 
+          name: 'resourceGroup_Name'
+          value: resourceGroupName
+        }
+        { 
+          name: 'subscription_Id'
+          value: subscriptionId
+        }
+        { 
+          name: 'eventGrid_connectionRuntimeUrl'
+          value: apiConnection.properties.connectionRuntimeUrl
         }
       ]
     }
@@ -80,6 +136,7 @@ resource logicApp 'Microsoft.Web/sites@2022-09-01' = {
   dependsOn: [
     appServicePlan
     storage
+    apiConnection
   ]
 }
 
@@ -95,6 +152,30 @@ resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-
     principalId: logicApp.identity.principalId
     principalType: 'ServicePrincipal'
   }
+}
+
+resource apiConnectionAccessPolicy 'Microsoft.Web/connections/accessPolicies@2016-06-01' = {
+  name: '${apiConnection.name}/${logicApp.name}' // Unique access policy name
+  location: resourceGroup().location
+  properties: {
+    principal: {
+      type: 'ActiveDirectory'
+      identity: {
+        tenantId: subscription().tenantId
+        objectId: logicApp.identity.principalId
+      }
+    }
+  }
+}
+
+resource logicAppZipDeploy 'Microsoft.Web/sites/extensions@2022-03-01' = {
+  name: '${logicApp.name}/zipdeploy'
+  properties: {
+    packageUri: 'https://github.com/ikhemissi/azure-ipaas-workshop/raw/refs/heads/main/src/workflows.zip'
+  }
+  dependsOn: [
+    apiConnectionAccessPolicy
+  ]
 }
 
 output principalId string = logicApp.identity.principalId
