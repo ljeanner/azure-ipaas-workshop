@@ -377,6 +377,71 @@ module dataStorageAccountUserAssignment './storageaccount-role-assign.bicep' = {
   }
 }
 
+module apimUserAssignment './apim-role-assign.bicep' = {
+  scope: resourceGroup
+  name: 'apimUserAssignment'
+  params: {
+    name: apim.outputs.name
+    roleDefinitionId: '312a565d-c81f-4fd8-895a-4e21e48d571c' // API Management Service Contributor
+    principalId: apim.outputs.principalId
+  }
+}
+
+module apimNamedValueTenant'./apim-named-value.bicep' = {
+  name: 'apimNamedValueTenant'
+  scope: resourceGroup
+  params: {
+    name: apim.outputs.name
+    namedValueName: 'tenant'
+    namedValueValue: tenant().tenantId
+    isSecret: false
+  }
+}
+
+module apimNamedValueSubscription'./apim-named-value.bicep' = {
+  name: 'apimNamedValueSubscription'
+  scope: resourceGroup
+  params: {
+    name: apim.outputs.name
+    namedValueName: 'subscription'
+    namedValueValue: subscription().subscriptionId
+    isSecret: false
+  }
+}
+
+module apimNamedValueRG'./apim-named-value.bicep' = {
+  name: 'apimNamedValueRG'
+  scope: resourceGroup
+  params: {
+    name: apim.outputs.name
+    namedValueName: 'resourcegroup'
+    namedValueValue: resourceGroup.name
+    isSecret: false
+  }
+}
+
+module apimNamedValueApim'./apim-named-value.bicep' = {
+  name: 'apimNamedValueApim'
+  scope: resourceGroup
+  params: {
+    name: apim.outputs.name
+    namedValueName: 'apim'
+    namedValueValue: apim.outputs.name
+    isSecret: false
+  }
+}
+
+module apimNamedValueCredit'./apim-named-value.bicep' = {
+  name: 'apimNamedValueCredit'
+  scope: resourceGroup
+  params: {
+    name: apim.outputs.name
+    namedValueName: 'credit'
+    namedValueValue: '0'
+    isSecret: false
+  }
+}
+
 module keyVaultUserAssignment './keyvault-role-assign.bicep' = {
   scope: resourceGroup
   name: 'keyVaultUserAssignment'

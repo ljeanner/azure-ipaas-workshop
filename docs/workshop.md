@@ -13,7 +13,7 @@ authors: # Required. You can add as many authors as needed
   - Louis-Guillaume Morand
   
 contacts: # Required. Must match the number of authors
-  - "@gdaCellenza"
+  - "guillaume.david@cellenza.com"
   - "alexandre.dejacques@cellenza.com"
   - "@ikhemissi"
   - "@lgmorand"
@@ -38,16 +38,19 @@ During this workshop you will have the instructions to complete each steps. The 
 
 </div>
 
-TODO: describe a business scenario around order processing
+In this lab, you are going to reproduce a real life scenario from a e-commerce platforms, when orders are passed by customers and when you need to process them, ideally asynchronously. You are going to leverage some Azure Services tailored to simplify this integration.
+
+TODO: mettre le schema drawio quand revu par Iheb
 
 ## Tooling and services
 
-- **iPaaS services**: Enable seamless integration of applications and data across different environments.
-  
-TODO, j'aime pas la description de Ipaas
-  
+- **Azure Logic Apps**: A cloud service that helps you automate workflows and integrate apps, data, and services.
+- **Azure Functions**: A serverless compute service that allows you to run event-driven code without managing infrastructure.
+- **Azure Service Bus**: A messaging service that enables reliable communication between distributed applications and services.
 - **azd** (Azure Developer CLI): `azd` is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
 - **GitHub Codespace**: GitHub Codespaces provides a cloud-based development environment that allows you to code, build, test, and collaborate from anywhere. It offers a fully configured development environment that can be accessed directly from your browser or through Visual Studio Code. With Codespaces, you can quickly spin up a development environment with all the necessary tools and dependencies, ensuring a consistent setup across your team.
+
+You will require a tool to send HTTP requests without coding such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [VSCode thunder](https://www.thunderclient.com/).
 
 ## Prepare your dev environment
 
@@ -111,7 +114,7 @@ Moreover, you some of the applications (e.g. Azure Functions) should also be dep
 You terminal should show green messages such as:
 ![azd up command](assets/intro/azdup.png)
 
-In the Azure portal, you should have a new usergroup with a lot of sub resources inside it.
+In the Azure portal, you should have a new resource group with a lot of sub resources inside it.
 
 ![resources generated](assets/intro/azportal.png)
 
@@ -486,7 +489,8 @@ We need to transform the initial message to a simplified format that is expected
 By consolidating passenger names into a list and focusing on key flight and payment details, we make the data more compact and easier for the target system to process.
 
 This is the message expected by the target system:
-`
+
+```json
 {
     "transformedBooking": {
         "bookingId": "B12345678",
@@ -508,7 +512,8 @@ This is the message expected by the target system:
         }
     }
 }
-`
+```
+
 We need to transform the message from JSON to XML because XSLT is designed to operate on XML data.
 Since XSLT requires XML as input to perform transformations, converting the JSON message into XML format allows us to leverage XSLTs powerful capabilities to manipulate and restructure the data as needed for the target system.
 
@@ -759,14 +764,18 @@ You should see your transformed message in the `toprocess` container:
 
 In the previous lab, we have added orders to CosmosDB.
 In this lab, we will focus on processing and fetching these orders by implementing 2 workflows:
+
 - Processing orders asynchronously using Azure Functions and Service Bus
 - Fetching and serving order synchronously va HTTP using Azure Functions
 
-TODO DRAFT: Introduce Azure Functions and Service Bus in 1-line each.
+As a reminder, you are now going to use:
+
+- **Azure Functions**: A serverless compute service that allows you to run event-driven code without managing infrastructure.
+- **Azure Service Bus**: A messaging service that enables reliable communication between distributed applications and services.
 
 ## Queueing orders in Service Bus
 
-TODO DRAFT: describe the need for async operations and the resiliency we get with a message broker like Service Bus including operation retries.
+Asynchronous operations are **essential** in modern applications to ensure that tasks are processed without blocking the main execution flow, improving overall performance and user experience. A message broker like Azure Service Bus enhances resiliency by decoupling application components, allowing them to communicate reliably even if one component is temporarily unavailable. Service Bus supports operation retries, ensuring that messages are eventually processed even in the face of transient failures, thus maintaining the integrity and reliability of the system.
 
 The data processing function app (with a name starting with `func-proc-lab`) should already have 2 functions deployed `QueueOrders` and `ProcessOrders`.
 
@@ -997,13 +1006,15 @@ Once you have deployed your updated Function App, you need to test your new chan
 
 <summary> Toggle solution</summary>
 
-TODO: describe how to get the url of the function and how to call it
+Open the function in the Azure portal and click on `Get function URL`. A side panel should open.
+
+![Get function's URL](assets/lab2/getfunctionurl.png)
 
 </details>
 
-## Summary
+## Summary Lab 2
 
-TODO: describe what the attendee has learned in this lab sync and async flows with functions and service bus.
+In this lab, you learned how to process and fetch orders using Azure Functions and Service Bus. You implemented asynchronous order processing to improve performance and resiliency, leveraging Service Bus for reliable communication and automatic retries. Additionally, you created an HTTP endpoint to fetch the latest processed orders from CosmosDB, demonstrating how to build event-driven and API-based workflows with Azure services.
 
 ---
 
@@ -1011,7 +1022,7 @@ TODO: describe what the attendee has learned in this lab sync and async flows wi
 
 For this Lab, we will focus on the following scope :
 
-![image](assets/lab3/lab3-scope.jpg)
+![Global process](assets/lab3/lab3-scope.jpg)
 
 ## Expose an API (5 minutes)
 
@@ -1021,18 +1032,18 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 2. On the left pane click on `APIS`
 3. Then, click on `+ Add API` and on the group `Create from Azure resource` select the tile `Function App`
 
-    ![image](assets/lab3/part1-step3.jpg)
+    ![Add an API](assets/lab3/part1-step3.jpg)
 
 4. In the window that opens :
-    1. For the field `Function App`, click on `Browse`
-    2. Then on the windows that opens :
-    3. On _Configure required settings_, click on `Select` and choose your **Function App**
+    - For the field `Function App`, click on `Browse`
+    - Then on the windows that opens :
+    - On _Configure required settings_, click on `Select` and choose your **Function App**
 
-        ![image](assets/lab3/part1-step4_2.jpg)
+        ![Function settings](assets/lab3/part1-step4_2.jpg)
 
-    4. Be sure the function `FetchOrders` is select and click on `Select`
+    - Be sure the function `FetchOrders` is select and click on `Select`
 
-        ![image](assets/lab3/part1-step4_3.jpg)
+        ![Function selection](assets/lab3/part1-step4_3.jpg)
 
 5. Replace the values for the fields with the following values :
       - **Display name**: `Orders API`
@@ -1042,17 +1053,19 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 
 ✅ **Now the API is ready.**
 
+<div class="task" data-title="Task">
 
-> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
->![image](assets/lab3/part1.jpg)
+> - Test the operation `FetchOrders` and make sure it returns the latest processed orders.
 
 </div>
+
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
+>![Test the API](assets/lab3/part1.jpg)
 
 </details>
 
@@ -1062,7 +1075,7 @@ Now the API is published, we will learn how to create a **Product** we will use 
 
 1. On the APIM screen, in the menu on the left, click on `Products`, then click on `+ Add`.
 
-    ![image](assets/lab3/part2-step1.jpg)
+    ![Product](assets/lab3/part2-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Display name**: `Basic`
@@ -1071,26 +1084,31 @@ Now the API is published, we will learn how to create a **Product** we will use 
       - `Published`
       - `Requires Subscription`
 
-    ![image](assets/lab3/part2-step2.jpg)
+    ![Product creation](assets/lab3/part2-step2.jpg)
 
 3. Select the created product from the list and click on it.
 
 4. On the next screen, click on `+ Add API`. In the right-hand menu that appears, select the API `Orders API` (the one create on the step 1) and then click `Select`.
 
-    ![image](assets/lab3/part2-step4.jpg)
+    ![Product - Add an API](assets/lab3/part2-step4.jpg)
 
 5. Select `Access control` from the menu on the left.
-6. Click on `+ Add group`, then in the right-hand menu, select Developers before clicking on `Select`.
+6. Click on `+ Add group`, then in the right-hand menu, select `Developers` before clicking on `Select`.
 
-    ![image](assets/lab3/part2-step6.jpg)
+    ![Product - Add a Group](assets/lab3/part2-step6.jpg)
 
-7. Repeat steps 1 to 6 to create another product named `Premium`
+
+<div class="task" data-title="Task">
+
+> Create a product named `Premium`, link it to the `Orders API`, and enable access control for the `Developers` group.
+
+</div>
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+> Repeat steps 1 to 6 to create another product named `Premium`
 
 </details>
 
@@ -1104,7 +1122,7 @@ We will below how create the subscription keys.
 
 1. On the APIM screen, in the menu on the left, click on `Subscriptions`, then click on `+ Add subscription`.
 
-    ![image](assets/lab3/part3_1-step1.jpg)
+    ![Create a subscription](assets/lab3/part3_1-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
     - **Name**: `Basic-Subscription`
@@ -1112,7 +1130,7 @@ We will below how create the subscription keys.
     - **Scope**: `Product`
     - **Product**: `Basic`
 
-    ![image](assets/lab3/part3_1-step2.jpg)
+    ![See subscription details](assets/lab3/part3_1-step2.jpg)
 
 3. For the purpose of the part 4, repeat steps 1 and 2 to create another subscription linked to the product `Premium`, with the following fields value :
     - **Name**: `Premium-Subscription`
@@ -1122,29 +1140,60 @@ We will below how create the subscription keys.
 
 Now that we have created two subscriptions, each corresponding to one of our products, we can view their values by right-clicking on them and selecting `Show/hide keys`
 
-![image](assets/lab3/part3_1.jpg)
+![See subscriptions keys](assets/lab3/part3_1.jpg)
+
+<div class="info" data-title="Note">
 
 > Be sure to note down the values of your keys to use them in the tests we will perform.
+
+</div>
 
 We will know test our API with the subscription key.
 
 <div class="tip" data-title="Tips">
+
 > Before continuing, go back to the `Settings` of your API and make sure the `Subscription required` checkbox is checked.
+
 </div>
 
-1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
-2. Next, click on the `Test` tab and copy the value under `Request URL`.
-3. Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
+<div class="task" data-title="Task">
 
-    ![image](assets/lab3/part3_1_ResultF.jpg)
+> - On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
+> - Next, click on the `Test` tab and copy the value under `Request URL`.
+> - Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
 
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+>![Subscription Result Failed](assets/lab3/part3_1_ResultF.jpg)
+>
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
 
-4. In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
 
-    ![image](assets/lab3/part3_1_ResultG.jpg)
+</details>
 
+<div class="task" data-title="Task">
+
+> Redo a test using the subscription with the header `Ocp-Apim-Subscription-Key`
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+> In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
+>
+>![Subscription Result Success](assets/lab3/part3_1_ResultG.jpg)
+>
 > ✅ The call is now successful with a 200 OK response.
+
+</details>
+
+
 
 ### OAuth 2.0
 
@@ -1153,7 +1202,7 @@ We will now see how to securize our API with the OAuth 2.0 standard
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-    ![image](assets/lab3/part3_2-step2.jpg)
+    ![Add a policy](assets/lab3/part3_2-step2.jpg)
 
 3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
@@ -1169,44 +1218,56 @@ We will now see how to securize our API with the OAuth 2.0 standard
 
 ```
 
-  ![image](assets/lab3/part3_2-step3.jpg)
+  ![Validate JWT Token Policy](assets/lab3/part3_2-step3.jpg)
 
-We will now see how to test our API securized by the OAuth 2.0 standard
+<div class="task" data-title="Task">
 
-1. Open Postman, on our previous request and click on `Send`.
+> We will now see how to test our API securized by the OAuth 2.0 standard
+>
+> Open Postman, on our previous request and click on `Send`.
 
-    ![image](assets/lab3/part3_2_ResultF.jpg)
-
-> 🔴 The API Manager returns a 401 error. Indeed, it is now necessary to pass the token in order to be authorized to call the API.
-
-2. On PostMan, create a new request with the following information
-    - Method : POST
-    - Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token`
-      **TBD : how we get the tenant ??**
-    - Under the Headers tab, choose the option x-www-form-urlencoded and add the following attributes with the values :
-        -**grant_type**: client_credentials
-        -**client_id**: **TBD**
-        -**client_secret**:**TBD**
-        -**scope**: **TBD**/.defaut
-    - Click on Send
-    - Retrieve the `access_token` returned by the identity provider.
-
-    ![image](assets/lab3/part3_2_ResultToken.jpg)
-
-3. Go back to the `FetchOrders` request.
-4. In the `Authorization` section, choose in the `Auth Type` list the value `Bearer Token` and copy/paste the value retrieved in step 2.
-
-5. Send the request and observe the result.
-
-    ![image](assets/lab3/part3_2_ResultG.jpg)
-
-> ✅ The Orders API is now secured using the OAuth 2.0 framework!
+</div>
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+>![image](assets/lab3/part3_2_ResultF.jpg)
+>
+> 🔴 The API Manager returns a 401 error. Indeed, it is now necessary to pass the token in order to be authorized to call the API.
+
+</details>
+
+
+On Postman, create a new request with the following information
+- Method : POST
+- Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token` **TBD : how we get the tenant ??**
+- Under the Headers tab, choose the option x-www-form-urlencoded and add the following attributes with the values :
+    - **grant_type**: client_credentials
+    - **client_id**: **TBD**
+    - **client_secret**:**TBD**
+    - **scope**: **TBD**/.defaut
+- Click on Send
+- Retrieve the `access_token` returned by the identity provider.
+
+![Generate Token Request](assets/lab3/part3_2_ResultToken.jpg)
+
+<div class="task" data-title="Task">
+
+> - Go back add he Bearer token to the `FetchOrders` request.
+> - Send the request and observe the result.
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+> In the `Authorization` section, choose in the `Auth Type` list the value `Bearer Token` and copy/paste the value retrieved during the request to generate a token.
+>
+> ![Request OAuth Success](assets/lab3/part3_2_ResultG.jpg)
+>
+> ✅ The Orders API is now secured using the OAuth 2.0 framework!
 
 </details>
 
@@ -1218,33 +1279,52 @@ In this final part of the lab, we will learn how to apply APIM policies to dynam
 
 To begin, we will set a limit for the Basic user to ensure they cannot call our API more than 5 times per minute.
 
-1. On the APIM screen, in the menu on the left, click on `Products`, then select the product `Basic` from the list and click on it.
-2. Go to `Policies`. On the right, in the `Inbound processing` section, click on the `+ Add policy` access the policy catalog.
+- On the APIM screen, in the menu on the left, click on `Products`, then select the product `Basic` from the list and click on it.
+- Go to `Policies`. On the right, in the `Inbound processing` section, click on the `+ Add policy` access the policy catalog.
 
-    ![image](assets/lab3/part4_1-step2.jpg)
+![Add Policy Product](assets/lab3/part4_1-step2.jpg)
 
-3. Click on the tile `rate-limit-by-key`
-4. In the window that opens, fill in the fields with the following values and then click `Save`:
-    - **Number of calls**: `5`
-    - **Renewal period**: `60`
-    - **Counter Key**: `API subscription`
-    - **increment condition**: `Any request`
+- Click on the tile `rate-limit-by-key`
 
-    ![image](assets/lab3/part4_1-step4.jpg)
+<div class="task" data-title="Task">
 
-5. Go back to Postman and run about ten closely spaced tests.
+> Configure the rate-limit-by-key policy to limit at 5 calls per minute per subscription.
 
-> Make sure to test using the subscription key corresponding to the `Basic` product.
-
-![image](assets/lab3/part4_1-Result.jpg)
-
->💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
+</div>
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+In the window that opens, fill in the fields with the following values and then click `Save`:
+- **Number of calls**: `5`
+- **Renewal period**: `60`
+- **Counter Key**: `API subscription`
+- **increment condition**: `Any request`
+
+![Configure RateLimit policy](assets/lab3/part4_1-step4.jpg)
+
+</details>
+
+<div class="task" data-title="Task">
+
+> Go back to Postman and run about ten closely spaced tests.
+
+</div>
+
+<div class="tip" data-title="Tip">
+
+> Make sure to test using the subscription key corresponding to the `Basic` product.
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+>![Result RateLimit Policy](assets/lab3/part4_1-Result.jpg)
+>
+>💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
 
 </details>
 
@@ -1252,12 +1332,12 @@ TODO: provide solution
 
 To conclude, we will simulate the monetization of an API using a custom policy that we will now implement.
 
-1. On the APIM screen, in the menu on the left, click on `Products`, then select the product `Premium` from the list and click on it.
-2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
+- On the APIM screen, in the menu on the left, click on `Products`, then select the product `Premium` from the list and click on it.
+- Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-![image](assets/lab3/part4_2-step2.jpg)
+![Add Policy Premium Product](assets/lab3/part4_2-step2.jpg)
 
-3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
+- In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
 ```xml
 
@@ -1295,36 +1375,51 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 
 ```
 
-4. On the APIM screen, in the menu on the left, click on `Named values`, then ensure that the value of the named value `Credit` is set to `0`.
-5. Go back to Postman and run a test
+- On the APIM screen, in the menu on the left, click on `Named values`, then ensure that the value of the named value `Credit` is set to `0`.
 
-    ![image](assets/lab3/part4_2-ResultF.jpg)
+<div class="task" data-title="Task">
 
->🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
+> Go back to Postman and run a test.
 
-6. Go back on the APIM screen, in the menu on the left, click on `Named values`, then select the named value `Credit` from the list and click on it and set the Value to `1` and click on `Save`.
-
-    ![image](assets/lab3/part4_2-step5.jpg)
-
-7. Go back to Postman and run about a test and observe the result.
-
-    ![image](assets/lab3/part4_2-ResultG.jpg)
-
-> ✅ Now we have credit, so the call is successful.
-
-<div class="tip" data-title="Tip">
-
-You can run another test to use up all your credit and observe the result.
+</div>
 
 <details>
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+> ![Request Result Failed](assets/lab3/part4_2-ResultF.jpg)
+>
+>🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
 
 </details>
 
-## Summary
+- Go back on the APIM screen, in the menu on the left, click on `Named values`, then select the named value `Credit` from the list and click on it and set the Value to `1` and click on `Save`.
+
+![Configure Named Value](assets/lab3/part4_2-step5.jpg)
+
+<div class="task" data-title="Task">
+
+> Go back to Postman and run about a test and observe the result.
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+![Request Result Success](assets/lab3/part4_2-ResultG.jpg)
+
+> ✅ Now we have credit, so the call is successful.
+
+</details>
+
+<div class="tip" data-title="Tip">
+
+> You can run another test to use up all your credit and observe the result.
+
+</div>
+
+## Summary Lab 3
 
 In this lab, we learn how to use Azure APIM in a four-step process:
 
