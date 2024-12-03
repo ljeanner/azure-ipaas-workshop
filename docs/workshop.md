@@ -1098,7 +1098,7 @@ Now the API is published, we will learn how to create a **Product** we will use 
 
 <div class="task" data-title="Task">
 
-> - Create a product named `Premium`, link it to the `Orders API`, and enable access control for the `Developers` group.
+> Create a product named `Premium`, link it to the `Orders API`, and enable access control for the `Developers` group.
 
 </div>
 
@@ -1140,7 +1140,11 @@ Now that we have created two subscriptions, each corresponding to one of our pro
 
 ![See subscriptions keys](assets/lab3/part3_1.jpg)
 
+<div class="info" data-title="Note">
+
 > Be sure to note down the values of your keys to use them in the tests we will perform.
+
+</div>
 
 We will know test our API with the subscription key.
 
@@ -1162,7 +1166,7 @@ We will know test our API with the subscription key.
 
 <summary> Toggle solution</summary>
 
->![SubscriptionResultFailed](assets/lab3/part3_1_ResultF.jpg)
+>![Subscription Result Failed](assets/lab3/part3_1_ResultF.jpg)
 >
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
 
@@ -1171,7 +1175,7 @@ We will know test our API with the subscription key.
 
 <div class="task" data-title="Task">
 
-> - Redo a test using the subscription with the header `Ocp-Apim-Subscription-Key`
+> Redo a test using the subscription with the header `Ocp-Apim-Subscription-Key`
 
 </div>
 
@@ -1181,7 +1185,7 @@ We will know test our API with the subscription key.
 
 > In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
 >
->   ![SubscriptionResultSuccess](assets/lab3/part3_1_ResultG.jpg)
+>![Subscription Result Success](assets/lab3/part3_1_ResultG.jpg)
 >
 > ✅ The call is now successful with a 200 OK response.
 
@@ -1196,7 +1200,7 @@ We will now see how to securize our API with the OAuth 2.0 standard
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-    ![image](assets/lab3/part3_2-step2.jpg)
+    ![Add a policy](assets/lab3/part3_2-step2.jpg)
 
 3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
@@ -1212,17 +1216,28 @@ We will now see how to securize our API with the OAuth 2.0 standard
 
 ```
 
-  ![image](assets/lab3/part3_2-step3.jpg)
+  ![Validate JWT Token Policy](assets/lab3/part3_2-step3.jpg)
 
-We will now see how to test our API securized by the OAuth 2.0 standard
+<div class="task" data-title="Task">
 
-1. Open Postman, on our previous request and click on `Send`.
+> We will now see how to test our API securized by the OAuth 2.0 standard
+>
+> Open Postman, on our previous request and click on `Send`.
 
-    ![image](assets/lab3/part3_2_ResultF.jpg)
+</div>
 
+<details>
+
+<summary> Toggle solution</summary>
+
+>![image](assets/lab3/part3_2_ResultF.jpg)
+>
 > 🔴 The API Manager returns a 401 error. Indeed, it is now necessary to pass the token in order to be authorized to call the API.
 
-2. On Postman, create a new request with the following information
+</details>
+
+
+On Postman, create a new request with the following information
     - Method : POST
     - Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token`
       **TBD : how we get the tenant ??**
@@ -1234,16 +1249,26 @@ We will now see how to test our API securized by the OAuth 2.0 standard
     - Click on Send
     - Retrieve the `access_token` returned by the identity provider.
 
-    ![image](assets/lab3/part3_2_ResultToken.jpg)
+![Generate Token Request](assets/lab3/part3_2_ResultToken.jpg)
 
-3. Go back to the `FetchOrders` request.
-4. In the `Authorization` section, choose in the `Auth Type` list the value `Bearer Token` and copy/paste the value retrieved in step 2.
+<div class="task" data-title="Task">
 
-5. Send the request and observe the result.
+> - Go back add he Bearer token to the `FetchOrders` request.
+> - Send the request and observe the result.
 
-    ![image](assets/lab3/part3_2_ResultG.jpg)
+</div>
 
+<details>
+
+<summary> Toggle solution</summary>
+
+> In the `Authorization` section, choose in the `Auth Type` list the value `Bearer Token` and copy/paste the value retrieved during the request to generate a token.
+>
+> ![Request OAuth Success](assets/lab3/part3_2_ResultG.jpg)
+>
 > ✅ The Orders API is now secured using the OAuth 2.0 framework!
+
+</details>
 
 ## Change the behaviour of your API with APIM Policies (15 minutes)
 
@@ -1253,38 +1278,65 @@ In this final part of the lab, we will learn how to apply APIM policies to dynam
 
 To begin, we will set a limit for the Basic user to ensure they cannot call our API more than 5 times per minute.
 
-1. On the APIM screen, in the menu on the left, click on `Products`, then select the product `Basic` from the list and click on it.
-2. Go to `Policies`. On the right, in the `Inbound processing` section, click on the `+ Add policy` access the policy catalog.
+- On the APIM screen, in the menu on the left, click on `Products`, then select the product `Basic` from the list and click on it.
+- Go to `Policies`. On the right, in the `Inbound processing` section, click on the `+ Add policy` access the policy catalog.
 
-    ![image](assets/lab3/part4_1-step2.jpg)
+![Add Policy Product](assets/lab3/part4_1-step2.jpg)
 
-3. Click on the tile `rate-limit-by-key`
-4. In the window that opens, fill in the fields with the following values and then click `Save`:
-    - **Number of calls**: `5`
-    - **Renewal period**: `60`
-    - **Counter Key**: `API subscription`
-    - **increment condition**: `Any request`
+- Click on the tile `rate-limit-by-key`
 
-    ![image](assets/lab3/part4_1-step4.jpg)
+<div class="task" data-title="Task">
 
-5. Go back to Postman and run about ten closely spaced tests.
+> Configure the rate-limit-by-key policy to limit at 5 calls per minute per subscription.
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+In the window that opens, fill in the fields with the following values and then click `Save`:
+- **Number of calls**: `5`
+- **Renewal period**: `60`
+- **Counter Key**: `API subscription`
+- **increment condition**: `Any request`
+
+![Configure RateLimit policy](assets/lab3/part4_1-step4.jpg)
+
+</details>
+
+<div class="task" data-title="Task">
+
+> Go back to Postman and run about ten closely spaced tests.
+
+</div>
+
+<div class="info" data-title="Note">
 
 > Make sure to test using the subscription key corresponding to the `Basic` product.
 
-![image](assets/lab3/part4_1-Result.jpg)
+</div>
 
+<details>
+
+<summary> Toggle solution</summary>
+
+>![Result RateLimit Policy](assets/lab3/part4_1-Result.jpg)
+>
 >💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
+
+</details>
 
 ### Monetize API
 
 To conclude, we will simulate the monetization of an API using a custom policy that we will now implement.
 
-1. On the APIM screen, in the menu on the left, click on `Products`, then select the product `Premium` from the list and click on it.
-2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
+- On the APIM screen, in the menu on the left, click on `Products`, then select the product `Premium` from the list and click on it.
+- Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-![image](assets/lab3/part4_2-step2.jpg)
+![Add Policy Premium Product](assets/lab3/part4_2-step2.jpg)
 
-3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
+- In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
 ```xml
 
@@ -1322,26 +1374,11 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 
 ```
 
-4. On the APIM screen, in the menu on the left, click on `Named values`, then ensure that the value of the named value `Credit` is set to `0`.
-5. Go back to Postman and run a test
+- On the APIM screen, in the menu on the left, click on `Named values`, then ensure that the value of the named value `Credit` is set to `0`.
 
-    ![image](assets/lab3/part4_2-ResultF.jpg)
+<div class="task" data-title="Task">
 
->🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
-
-6. Go back on the APIM screen, in the menu on the left, click on `Named values`, then select the named value `Credit` from the list and click on it and set the Value to `1` and click on `Save`.
-
-    ![image](assets/lab3/part4_2-step5.jpg)
-
-7. Go back to Postman and run about a test and observe the result.
-
-    ![image](assets/lab3/part4_2-ResultG.jpg)
-
-> ✅ Now we have credit, so the call is successful.
-
-<div class="tip" data-title="Tip">
-
-You can run another test to use up all your credit and observe the result.
+> Go back to Postman and run a test.
 
 </div>
 
@@ -1349,9 +1386,37 @@ You can run another test to use up all your credit and observe the result.
 
 <summary> Toggle solution</summary>
 
-TODO: provide solution
+> ![Request Result Failed](assets/lab3/part4_2-ResultF.jpg)
+>
+>🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
 
 </details>
+
+- Go back on the APIM screen, in the menu on the left, click on `Named values`, then select the named value `Credit` from the list and click on it and set the Value to `1` and click on `Save`.
+
+![Configure Named Value](assets/lab3/part4_2-step5.jpg)
+
+<div class="task" data-title="Task">
+
+> Go back to Postman and run about a test and observe the result.
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+![Request Result Success](assets/lab3/part4_2-ResultG.jpg)
+
+> ✅ Now we have credit, so the call is successful.
+
+</details>
+
+<div class="tip" data-title="Tip">
+
+You can run another test to use up all your credit and observe the result.
+
+</div>
 
 ## Summary Lab 3
 
