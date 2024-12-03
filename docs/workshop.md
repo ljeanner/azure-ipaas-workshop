@@ -1241,10 +1241,10 @@ On Postman, create a new request with the following information
 - Method : POST
 - Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token` **TBD : how we get the tenant ??**
 - Under the Headers tab, choose the option x-www-form-urlencoded and add the following attributes with the values :
-    -**grant_type**: client_credentials
-    -**client_id**: **TBD**
-    -**client_secret**:**TBD**
-    -**scope**: **TBD**/.defaut
+    - **grant_type**: client_credentials
+    - **client_id**: **TBD**
+    - **client_secret**:**TBD**
+    - **scope**: **TBD**/.defaut
 - Click on Send
 - Retrieve the `access_token` returned by the identity provider.
 
