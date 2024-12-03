@@ -1142,9 +1142,9 @@ We will know test our API with the subscription key.
 
 <div class="task" data-title="Task">
 
-> 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
-> 2. Next, click on the `Test` tab and copy the value under `Request URL`.
-> 3. Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
+> - On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
+> - Next, click on the `Test` tab and copy the value under `Request URL`.
+> - Open Postman, create a new request, paste the value copied in the previous step, and click on `Send`.
 
 </div>
 
@@ -1159,11 +1159,25 @@ We will know test our API with the subscription key.
 
 </details>
 
-4. In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
+<div class="task" data-title="Task">
 
-    ![image](assets/lab3/part3_1_ResultG.jpg)
+> - Redo a test using the subscription with the header `Ocp-Apim-Subscription-Key`
 
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+> In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
+>
+>   ![SubscriptionResultSuccess](assets/lab3/part3_1_ResultG.jpg)
+>
 > ✅ The call is now successful with a 200 OK response.
+
+</details>
+
+
 
 ### OAuth 2.0
 
