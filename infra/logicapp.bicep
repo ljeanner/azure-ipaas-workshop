@@ -37,6 +37,22 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   tags: tags
 }
 
+resource apiConnection 'Microsoft.Web/connections@2018-07-01-preview' = {
+  name: 'azureeventgrid'
+  location: location
+  kind: 'V2'
+  properties: {
+    displayName: 'co-eg-handsonlabinoday01'
+    api: {
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureeventgrid')
+      type: 'Microsoft.Web/locations/managedApis'
+    }
+    parameterValueType:'Alternative'
+    alternativeParameterValues:{}
+  }
+  tags: tags
+}
+
 resource logicApp 'Microsoft.Web/sites@2022-09-01' = {
   name: appName
   location: location
@@ -109,6 +125,10 @@ resource logicApp 'Microsoft.Web/sites@2022-09-01' = {
           name: 'subscription_Id'
           value: subscriptionId
         }
+        { 
+          name: 'eventGrid_connectionRuntimeUrl'
+          value: apiConnection.properties.connectionRuntimeUrl
+        }
       ]
     }
   }
@@ -116,6 +136,7 @@ resource logicApp 'Microsoft.Web/sites@2022-09-01' = {
   dependsOn: [
     appServicePlan
     storage
+    apiConnection
   ]
 }
 
@@ -133,29 +154,6 @@ resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-
   }
 }
 
-resource logicAppZipDeploy 'Microsoft.Web/sites/extensions@2022-03-01' = {
-  name: '${logicApp.name}/zipdeploy'
-  properties: {
-    packageUri: 'https://github.com/ikhemissi/azure-ipaas-workshop/raw/refs/heads/Lab01/src/workflows.zip'
-  }
-}
-
-resource apiConnection 'Microsoft.Web/connections@2016-06-01' = {
-  name: 'azureeventgrid'
-  location: location
-  kind: 'V2'
-  properties: {
-    displayName: 'co-eg-handsonlabinoday01'
-    api: {
-      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureeventgrid')
-      type: 'Microsoft.Web/locations/managedApis'
-    }
-  }
-  tags: tags
-}
-
-// id: subscriptionResourceId('Microsoft.Web/locations/apis', location, '/managedApis/azureeventgrid')
-
 resource apiConnectionAccessPolicy 'Microsoft.Web/connections/accessPolicies@2016-06-01' = {
   name: '${apiConnection.name}/${logicApp.name}' // Unique access policy name
   location: resourceGroup().location
@@ -168,8 +166,15 @@ resource apiConnectionAccessPolicy 'Microsoft.Web/connections/accessPolicies@201
       }
     }
   }
+}
+
+resource logicAppZipDeploy 'Microsoft.Web/sites/extensions@2022-03-01' = {
+  name: '${logicApp.name}/zipdeploy'
+  properties: {
+    packageUri: 'https://github.com/ikhemissi/azure-ipaas-workshop/raw/refs/heads/main/src/workflows.zip'
+  }
   dependsOn: [
-    apiConnection
+    apiConnectionAccessPolicy
   ]
 }
 
