@@ -1238,16 +1238,15 @@ We will now see how to securize our API with the OAuth 2.0 standard
 
 
 On Postman, create a new request with the following information
-    - Method : POST
-    - Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token`
-      **TBD : how we get the tenant ??**
-    - Under the Headers tab, choose the option x-www-form-urlencoded and add the following attributes with the values :
-        -**grant_type**: client_credentials
-        -**client_id**: **TBD**
-        -**client_secret**:**TBD**
-        -**scope**: **TBD**/.defaut
-    - Click on Send
-    - Retrieve the `access_token` returned by the identity provider.
+- Method : POST
+- Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token` **TBD : how we get the tenant ??**
+- Under the Headers tab, choose the option x-www-form-urlencoded and add the following attributes with the values :
+    -**grant_type**: client_credentials
+    -**client_id**: **TBD**
+    -**client_secret**:**TBD**
+    -**scope**: **TBD**/.defaut
+- Click on Send
+- Retrieve the `access_token` returned by the identity provider.
 
 ![Generate Token Request](assets/lab3/part3_2_ResultToken.jpg)
 
@@ -1311,7 +1310,7 @@ In the window that opens, fill in the fields with the following values and then 
 
 </div>
 
-<div class="info" data-title="Note">
+<div class="tip" data-title="Tip">
 
 > Make sure to test using the subscription key corresponding to the `Basic` product.
 
@@ -1414,7 +1413,7 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 
 <div class="tip" data-title="Tip">
 
-You can run another test to use up all your credit and observe the result.
+> You can run another test to use up all your credit and observe the result.
 
 </div>
 
