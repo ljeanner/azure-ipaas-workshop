@@ -176,7 +176,7 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 <div class="task" data-title="Tasks">
 
->- Check that the logic app has sufficient RBAC configurations for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
+>- Check that the logic app has the `Event Grid Contributor` role for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -209,10 +209,18 @@ Azure Logic Apps offers different components which can be used to define the ste
 Since we want the Logic App to be triggered when an event is published in the Event Grid System Topic, we will be using the Event Grid Built-In connector available in Logic App.
 It comes with the `When a resource event occurs` action, that is triggered when an Azure Event Grid subscription receives the subscribed event.
 
+<div class="info" data-title="Note">
+
+When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
+The subscription will initially remain in the `Creating` state.
+
+</div>
+
 <div class="task" data-title="Tasks">
 
 >- Check the Logic App `loa-proc-lab-no-ipa-[randomId]`, and confirm the configuration of the Event Grid trigger workflow `wf_orders_from_sa_to_sb`.
-> - Save the workflow once confirmed.
+>- Add a whitespace in the subscription textbox to create the Event Grid System Topic subscription.
+>- Save the workflow once confirmed.
 
 </div>
 
@@ -237,9 +245,6 @@ You should see the following RBAC configuration in your Storage Account :
 </details>
 
 ### Check the Event Grid subscription in the Event Grid System Topic
-
-When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
-The subscription will initially remain in the `Creating` state.
 
 We will see in the next step why and how to validate the subscription.
 In the meatime, let's have a look at the Event Grid subscription.
