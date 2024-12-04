@@ -54,8 +54,7 @@ TODO: mettre le schema drawio quand revu par Iheb
 - **Azure Developer CLI** (azd): `azd` is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
 - **GitHub Codespace**: GitHub Codespaces provides a cloud-based development environment that allows you to code, build, test, and collaborate from anywhere. It offers a fully configured development environment that can be accessed directly from your browser or through Visual Studio Code. With Codespaces, you can quickly spin up a development environment with all the necessary tools and dependencies, ensuring a consistent setup across your team.
 
-TODO: Check if Rest Client extension isn't easier ? 
-You will require a tool to send HTTP requests without coding such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [VSCode thunder](https://www.thunderclient.com/).
+You will require a tool to send HTTP requests without coding such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [VSCode thunder](https://www.thunderclient.com/) or [VSCode Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
 
 ## Prepare your dev environment
 
@@ -618,7 +617,7 @@ It currently supports NoSQL, MongoDB, Cassandra, Gremlin, Table and PostgreSQL A
 
 Before creating the document in Cosmos DB, we need to add a unique `id` property to the document, as it is mandatory.
 We will use a `Compose` action to generate a unique identifier and append an `id` property to our message.
-TODO: Read up to this point, will continue tomorrow morning 
+TODO (julien): Read up to this point, will continue tomorrow morning 
 
 <div class="task" data-title="Tasks">
 
