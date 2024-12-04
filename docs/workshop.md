@@ -237,10 +237,9 @@ The subscription will initially remain in the `Creating` state.
 >- In the `Subscription` textbox, add a space
 >- Save the workflow
 
-You should see the following RBAC configuration in your Storage Account :
+You should see the following :
 
-![IAM](assets/lab1/image-1.png)
-//TODO: Add a screen of the action configuration
+![LogicApp Designer Trigger](assets/lab1/image-2.png)
 
 </details>
 
