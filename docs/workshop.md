@@ -470,8 +470,8 @@ As the Service Bus connection configuration is already done, we will focus on th
 >- In the left-hand menu, click on `Designer` from the `Developer` section.
 >- Click on the `Add a trigger` button.
 >- In the `triggers` list search for `Service Bus` and select the `When messages are available in a topic` trigger.
->- In the Topic Name dropdown list, select the `topic-flighbooking` topic.
->- In the Subscription Name dropdown list, select the `sub-flighbooking-cdb` subscription.
+>- In the Topic Name dropdown list, select the `topic-orders` topic.
+>- In the Subscription Name dropdown list, select the `sub-orders-cdb` subscription.
 >- Once everything is set, click on the Save button on the top left corner.
 
 The trigger operation should look like this :
