@@ -1199,6 +1199,65 @@ We will know test our API with the subscription key.
 
 We will now see how to securize our API with the OAuth 2.0 standard
 
+<details>
+
+<summary>OAuth Configuration on Entra ID</summary>
+
+<div class="warning" data-title="Warning">
+
+> If you are in an instructor-led session, you can skip this section.
+
+</div>
+
+In this section, we will learn how to configure EntraId to enable OAuth security using your identity provider, Azure Entra ID. We will create two App Registrations: one representing the API in Azure Entra ID and another representing the API caller.
+
+First the App Registrations for the API.
+
+- Navigate to the directory hosting the relevant Azure Entra ID.
+- From the portal, search for the Azure Entra ID instance and click on the found resource.
+- In the left-hand menu, click on `App registrations`, then click on `+ New registration`
+
+    ![Add App Registration](assets/lab3/Add-AppRegistration.jpg)
+
+- In the displayed window, fill in the fields with the following values, then click on `Register`:
+    - **Name**: `Orders-api`
+    - **Supported account types**: `Accounts in this organizational directory only (Single tenant)`
+    - **Redirect URL**: `Leave blank`
+
+    ![Register App Registration](assets/lab3/Register-AppRegistration.jpg)
+
+- If the App Registration window does not open automatically, click on the application you just created in the list.
+- From the Overview tile, locate the `Application (client) ID` value and note it down for later use.
+- In the left-hand menu, click on `Expose an API`, then at the top of the page, click on `Set` next to `Application ID URI`. Confirm with the default value.
+
+    ![Configure Scope](assets/lab3/Add-Audience.jpg)
+
+Then, the App Registration for the caller of the API.
+
+- In the left-hand menu, click on `App registrations`, then click on `+ New registration`
+- In the displayed window, fill in the fields with the following values, then click on `Register`:
+    - **Name**: `Caller App`
+    - **Supported account types**: `Accounts in this organizational directory only (Single tenant)`
+    - **Redirect URL**: `Leave blank`
+- From the Overview tile, locate the Application (client) ID value and note it down for later use.
+- In the left-hand menu, click on `Certificates & secrets` and Click on `+ New client secret`
+
+    ![Create Secret](assets/lab3/Add-Secret.jpg)
+
+- In the displayed window, enter `caller-registration-key` as the description, then click on `Add`.
+
+    ![Configure Secret](assets/lab3/Configure-Secret.jpg)
+
+<div class="info" data-title="Note">
+
+> Be careful, make sure to note down the `Value` because it will not be visible again later.
+
+</div>
+
+The Azure EntraId configuration is ready. Let's move on to the API Management section.
+
+</details>
+
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
