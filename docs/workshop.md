@@ -176,7 +176,7 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 <div class="task" data-title="Tasks">
 
->- Check that the logic app has sufficient RBAC configurations for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
+>- Check that the logic app has the `Event Grid Contributor` role for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
