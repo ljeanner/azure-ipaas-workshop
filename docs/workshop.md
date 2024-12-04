@@ -60,7 +60,8 @@ You will require a tool to send HTTP requests without coding such as [Postman](h
 ## Prepare your dev environment
 
 <div class="task" data-title="Task">
-You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
+
+> You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
 
 </div>
 
@@ -162,7 +163,6 @@ To enable Serverless scenarios, an event-driven approach and architecture is req
 
 </div>
 
-
 For the purpose of the lab, we'll start by using Event Grid to integrate applications while subscribing to event sources. Azure Services, First and Third-Party SaaS services or custom apps can be the source (publishers) of events that are delivered to subscribers such as applications, Azure services, or any accessible HTTP endpoint to be consumed and acted upon.
 
 ### Check Logic App permission to access Event Grid
@@ -211,8 +211,8 @@ It comes with the `When a resource event occurs` action, that is triggered when 
 
 <div class="info" data-title="Note">
 
-When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
-The subscription will initially remain in the `Creating` state.
+> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in > the Storage Account, following default naming conventions.
+> The subscription will initially remain in the `Creating` state.
 
 </div>
 
@@ -1077,7 +1077,6 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 > - Test the operation `FetchOrders` and make sure it returns the latest processed orders.
 
 </div>
-
 
 <details>
 
