@@ -60,7 +60,8 @@ You will require a tool to send HTTP requests without coding such as [Postman](h
 ## Prepare your dev environment
 
 <div class="task" data-title="Task">
-You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
+
+> You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
 
 </div>
 
@@ -162,7 +163,6 @@ To enable Serverless scenarios, an event-driven approach and architecture is req
 
 </div>
 
-
 For the purpose of the lab, we'll start by using Event Grid to integrate applications while subscribing to event sources. Azure Services, First and Third-Party SaaS services or custom apps can be the source (publishers) of events that are delivered to subscribers such as applications, Azure services, or any accessible HTTP endpoint to be consumed and acted upon.
 
 ### Check Logic App permission to access Event Grid
@@ -211,8 +211,8 @@ It comes with the `When a resource event occurs` action, that is triggered when 
 
 <div class="info" data-title="Note">
 
-When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
-The subscription will initially remain in the `Creating` state.
+> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
+> The subscription will initially remain in the `Creating` state.
 
 </div>
 
@@ -495,7 +495,7 @@ Additionally, Logic Apps supports external tools like Azure API Management for p
 
 <div class="info" data-title="Note">
 
-[Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
+>[Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
 
 </div>
 
@@ -809,6 +809,7 @@ The data processing function app (with a name starting with `func-proc-lab`) sho
 > - You can use the environment variables `SERVICEBUS_QUEUE`, and `SB_ORDERS__fullyQualifiedNamespace` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-<SUFFIX>`
 >
 > - You can leverage the [Service Bus output binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript)
+
 </div>
 
 <details>
@@ -1190,7 +1191,6 @@ We will know test our API with the subscription key.
 >![Subscription Result Failed](assets/lab3/part3_1_ResultF.jpg)
 >
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
-
 
 </details>
 
