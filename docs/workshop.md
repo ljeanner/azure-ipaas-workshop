@@ -219,8 +219,8 @@ The subscription will initially remain in the `Creating` state.
 <div class="task" data-title="Tasks">
 
 >- Check the Logic App `loa-proc-lab-no-ipa-[randomId]`, and confirm the configuration of the Event Grid trigger workflow `wf_orders_from_sa_to_sb`.
->- Add a whitespace in the subscription textbox to create the Event Grid System Topic subscription.
->- Save the workflow once confirmed.
+>- Do a modification by adding a whitespace in the subscription textbox
+>- Save the workflow once confirmed to create the Event Grid System Topic subscription automatically.
 
 </div>
 
