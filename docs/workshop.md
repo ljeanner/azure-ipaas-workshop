@@ -514,7 +514,7 @@ Additionally, Logic Apps supports external tools like Azure API Management for p
 
 <div class="info" data-title="Note">
 
-[Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
+> [Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
 
 </div>
 
