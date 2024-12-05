@@ -11,25 +11,26 @@ authors: # Required. You can add as many authors as needed
   - Alexandre Dejacques
   - Iheb Khemissi
   - Louis-Guillaume Morand
-  
+  - Julien Strebler
+
 contacts: # Required. Must match the number of authors
   - "guillaume.david@cellenza.com"
   - "alexandre.dejacques@cellenza.com"
   - "@ikhemissi"
   - "@lgmorand"
+  - "@justrebl"
 duration_minutes: 180
 tags: azure, ipaas, functions, logic apps, apim, service bus, event grid, entra, cosmosdb, codespace, devcontainer
 navigation_levels: 3
-
 ---
 
 # Introduction
 
 Welcome to this Azure iPaaS Workshop. You'll be experimenting with multiple integration services to build an event-driven data processing application.
 
-You should ideally have a basic understanding of Azure, but if not then do not worry, you will be guided through the whole process.
+You should ideally have a basic understanding of Azure, but if not, do not worry, you will be guided through the whole process.
 
-During this workshop you will have the instructions to complete each steps. The solutions are placed under the 'Toggle solution' panel.
+During this workshop you will have the instructions to complete each step. The solutions are placed under the 'Toggle solution' panels.
 
 <div class="task" data-title="Task">
 
@@ -38,24 +39,28 @@ During this workshop you will have the instructions to complete each steps. The 
 
 </div>
 
-In this lab, you are going to reproduce a real life scenario from a e-commerce platforms, when orders are passed by customers and when you need to process them, ideally asynchronously. You are going to leverage some Azure Services tailored to simplify this integration.
+In this lab, you are going to reproduce a real-life scenario from an e-commerce platform:
 
-TODO: mettre le schema drawio quand revu par Iheb
+- Customers will place new orders that will be synchronized asynchronously.
+- You are going to leverage Azure Services tailored to simplify this integration.
+
+![Architecture diagram](./assets/intro/architecture-schema.png)
 
 ## Tooling and services
 
 - **Azure Logic Apps**: A cloud service that helps you automate workflows and integrate apps, data, and services.
 - **Azure Functions**: A serverless compute service that allows you to run event-driven code without managing infrastructure.
 - **Azure Service Bus**: A messaging service that enables reliable communication between distributed applications and services.
-- **azd** (Azure Developer CLI): `azd` is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
+- **Azure Developer CLI** (azd): `azd` is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
 - **GitHub Codespace**: GitHub Codespaces provides a cloud-based development environment that allows you to code, build, test, and collaborate from anywhere. It offers a fully configured development environment that can be accessed directly from your browser or through Visual Studio Code. With Codespaces, you can quickly spin up a development environment with all the necessary tools and dependencies, ensuring a consistent setup across your team.
 
-You will require a tool to send HTTP requests without coding such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [VSCode thunder](https://www.thunderclient.com/).
+You will require a tool to send HTTP requests without coding, such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [VSCode thunder](https://www.thunderclient.com/) or [VSCode Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
 
 ## Prepare your dev environment
 
 <div class="task" data-title="Task">
-You have a fork the GitHub project in order to have you own copy that you can keep and edit. You could clone it locally but we will leverage GitHub Codespaces
+
+> You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
 
 </div>
 
@@ -63,20 +68,22 @@ You have a fork the GitHub project in order to have you own copy that you can ke
 
 <summary> Toggle solution</summary>
 
-1- Open a browser and go the [lab repository](https://github.com/ikhemissi/azure-ipaas-workshop/)
+1- Open the [lab repository](https://github.com/ikhemissi/azure-ipaas-workshop/)
 
-2- Click on `Code`, then `Codespaces` and on the button `Create codespace on main`.
+2- Click on `Code`, select the `Codespaces` tab, and click `Create codespace on main`.
 ![Create codespace](assets/intro/codespace.png)
 
-3- It should open a new tab in your browser with a full editor and a terminal from where you are going to continue the lab. It can take few minutes because Codespace create a container (kind of virtual machine) and installs a lot of tools on it
+3- It should open a new tab in your browser with a full fledged IDE and a terminal that will be exclusively used for the lab. It can take a few minutes for the initial setup as Codespace starts a devcontainer on a dedicated virtual machine, with the initial setup, tools and configurations to successfully achieve the lab.
 ![Codespace editor](assets/intro/codespace2.png)
+
 </details>
 
 ### Provision resources in Azure
 
 <div class="task" data-title="Task">
 
-> - Use `azd` to provision resources in Azure and deploy provided applications. You can use the `azd up` command, once logged in to Azure in your terminal.
+> - Use `azd` to provision resources in Azure and deploy provided applications.
+> - You can use the `azd up` command, once logged in Azure, from your terminal.
 
 </div>
 
@@ -96,9 +103,9 @@ azd up
 
 ### Validate the setup on Azure
 
-The provisioning step may take few minutes. Once it finishes you should have a resource group containing all resources needed in this workshop.
+The provisioning steps may take a few minutes. Once it's finished, you should have a resource group ready with all the resources needed in this workshop.
 
-Moreover, you some of the applications (e.g. Azure Functions) should also be deployed and ready to be used.
+Moreover, some of the applications (e.g. Azure Functions) should also be deployed and ready to be used.
 
 <div class="task" data-title="Task">
 
@@ -111,10 +118,10 @@ Moreover, you some of the applications (e.g. Azure Functions) should also be dep
 
 <summary> Toggle solution</summary>
 
-You terminal should show green messages such as:
+Your terminal should display green messages such as the following:
 ![azd up command](assets/intro/azdup.png)
 
-In the Azure portal, you should have a new resource group with a lot of sub resources inside it.
+In the Azure portal, you should have a new resource group with a lot of sub resources provisionned inside it.
 
 ![resources generated](assets/intro/azportal.png)
 
@@ -126,13 +133,16 @@ In the Azure portal, you should have a new resource group with a lot of sub reso
 
 For this first lab, you will focus on the following scope :
 
-![Global process](assets/lab1/image.png)
+![Architecture diagram lab 1](./assets/lab1/architecture-schema-lab1.png)
+
 
 ## Detect a file upload event (15 min)
 
+This labs aims to guide you through building a seamless and secure end-to-end data processing solution using Azure Integration Services. You will learn how to build workflows triggered by file uploads, transform and publish messages, and store them in Cosmos DB, emphasizing best practices for event-driven architectures, integration patterns and security for modern cloud solutions.
+
 ### Secure connections between Azure Services with Managed Identities
 
-Managed Identities in Azure allow resources to authenticate securely to other Azure services. This feature eliminates the need to manage secrets or keys, reducing the risk of accidental exposure and simplifying maintenance. By enabling seamless and secure communication between resources, Managed Identities promote a stronger security model that relies on Azure's identity platform for authentication.
+Managed Identities in Azure allow resources to authenticate securely to other Azure services. This feature eliminates the need to manage secrets or keys, reducing the risk of accidental exposure and simplifying maintenance. By enabling seamless and secure communication between resources, Managed Identities promote a stronger security model that relies on Azure's identity platform ([MS Entra ID](https://www.microsoft.com/fr-fr/security/business/identity-access/microsoft-entra-id)) for authentication.
 
 <div class="info" data-title="Note">
 
@@ -142,11 +152,11 @@ Managed Identities in Azure allow resources to authenticate securely to other Az
 
 ### Event Services
 
-Serverless is all about designing the application around event-driven architectures. Azure offers several options when it comes to message and event brokering, with the principal following services :
+To enable Serverless scenarios, an event-driven approach and architecture is required. Events and messages can be of different forms, and Azure offers several options when it comes to message and event brokers, such as :
 
-- Event Grid is a serverless eventing bus that enables event-driven, reactive programming, using the publish-subscribe model.
+- Event Grid is a serverless backplane, an eventing bus that enables event-driven, reactive programming, using the publish-subscribe model.
 - Service Bus is a fully managed enterprise message broker with message queues and publish/subscribe topics.
-- Event Hub is a big data streaming platform and event ingestion service. It can receive and process millions of events per second.
+- Event Hub is a event ingestion and streaming platform. It can fuel high throughput scenarios and manage millions of events per second.
 
 <div class="info" data-title="Note">
 
@@ -154,19 +164,22 @@ Serverless is all about designing the application around event-driven architectu
 
 </div>
 
-Event Grid is an event broker that you can use to integrate applications while subscribing to event sources. These events are delivered through Event Grid to subscribers such as applications, Azure services, or any accessible endpoint. Azure services, First and Third-party SaaS services as well as custom applications can be the source of these events.
+For the purpose of the lab, we'll start by using Event Grid to integrate applications while subscribing to event sources. Azure Services, First and Third-Party SaaS services or custom apps can be the source (publishers) of events that are delivered to subscribers such as applications, Azure services, or any accessible HTTP endpoint to be consumed and acted upon.
 
-### Check Logic App permission to access Event Grid
+### Check Logic App permissions
 
-Event Grid enables event-driven automation by reacting to changes in Azure resources, such as triggering workflows or functions when a blob is uploaded to Azure Blob Storage.
-This simplifies integration and real-time processing across services without constant polling.
-You will use it to trigger the Logic App workflow `wf_orders_from_sa_to_sb` when a blob is uploaded in the `inputfiles` container of the Storage Account.
+#### Check Logic App permission to access Event Grid
 
-The Logic App needs to access the Event Grid service through the Storage Account as it will create an Event Grid System Topic when the Event Grid trigger connector is created. Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Storage Account.
+Event Grid enables event-driven scenarios by reacting to events/changes (like uploading a blob to Azure Storage Account for example) in Azure resources, and gives a trigger option for workflows or functions.
+This simplifies integration and real-time processing across services without the need for constant polling.
+
+In the lab, you will use it to trigger the `wf_orders_from_sa_to_sb` Logic App workflow when a blob will be uploaded in the `inputfiles` container of the Storage Account.
+
+The Logic App needs to access the Event Grid service through the Storage Account as it will create an Event Grid System Topic when the Event Grid trigger connector is created. Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check the identity has the proper configuration in the Storage Account.
 
 <div class="task" data-title="Tasks">
 
->- Check that correct RBAC configuration is applied in the Storage Account `stdatalabnoipa[randomid]`.
+> - Check that the logic app has the `Event Grid Contributor` role for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -174,17 +187,58 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
->- In the left-hand menu, click on `Access Control (IAM)`.
->- From the top-menu bar, click on Role Assignment and check that Logic App `loa-proc-lab-no-ipa-[randomId]` has the **Event Grid Contributor** role.
+> - Navigate to the Storage Account `stdatalabnoipa[randomid]`.
+> - In the left-hand menu, click on `Access Control (IAM)`.
+> - From the top-menu bar, click on Role Assignment and check that Logic App `loa-proc-lab-no-ipa-[randomId]` system managed identity has the **Event Grid Contributor** role.
 
 You should see the following RBAC configuration in your Storage Account :
 
 ![IAM](assets/lab1/image-1.png)
 
+A Logic App triggered by Event Grid for blob uploads needs the `Event Grid Contributor` role on the storage account to subscribe to Event Grid blob-created events and to validate the webhook endpoint during setup. 
+
 </details>
 
-### Check the Event Grid trigger in Logic App
+#### Check Logic App permission to access Storage Account
+
+With a Storage Account, it is possible to store various data objects, including blobs, file shares, messages in a queue, table formatted data, and disks. In our lab, we will use it to store the sample order JSON file inside an `inputfiles` container.
+
+The Logic App needs to access the Storage Account to retrieve the JSON file, and for the Event Grid trigger connector to list the available Storage Accounts in the Subscription.
+Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Storage Account.
+
+<div class="task" data-title="Tasks">
+
+> - Check that correct RBAC configuration is applied in the Storage Account `stdatalabnoipa[randomid]`:
+
+</div>
+
+<details>
+
+<summary> Toggle solution</summary>
+
+> - Navigate to the Storage Account `stdatalabnoipa[randomid]`.
+> - In the left-hand menu, click on `Access Control (IAM)`.
+> - From the top-menu bar, click on Role Assignment and check that Logic App `loa-proc-lab-no-ipa-[randomId]` has the **Storage Blob Data Reader** role. 
+
+You should see the following RBAC configuration in your Storage Account :
+
+![Storage Account IAM](assets/lab1/image-3.png)
+
+</details>
+
+// TO DO : FAIRE UNE TRANSITION AVEC LE DESIGNER
+
+### Check the Logic App Workflows
+
+A **workflows** is a series of operations that define a task, business process, or workload. Each workflow always starts with a single trigger operation, after which you must add one or more action operations.
+
+#### Check the Event Grid trigger in Logic App
+
+<div class="info" data-title="Note">
+
+> A **trigger** is the first operation in any workflow that specifies the criteria to meet before running any subsequent operations in that workflow. In this lab, we want to **trigger an event when a new file is uploaded in a storage account**.
+
+</div>
 
 Next step is to actually trigger the Logic App `loa-proc-lab-no-ipa-[randomId]` based on the event raised by your Event Grid System Topic when a file is uploaded to the `inputfiles` container.
 
@@ -194,12 +248,21 @@ Azure Logic Apps offers different components which can be used to define the ste
 - **Controls** : Switch, Loop, Condition, Scope are used to control the flow of the steps composing the actual logic of the workflow.
 - **Connectors** : Connectors are used to connect to different first of third party services and applications. These connectors abstract the complexities of interacting with these services by defining their required and optional inputs as well as deserializing their outputs to dynamic objects usable in the rest of the flow steps.
 
-Since we want the Logic App to be triggered when an event is pushed from the Event Grid System Topic, we will be using the Event Grid Built-In connector available in Logic App.
-It comes with one action "When a resource event occurs", that is triggered when an Azure Event Grid subscription fires an event.
+Since we want the Logic App to be triggered when an event is published in the Event Grid System Topic, we will be using the Event Grid Built-In connector available in Logic App.
+It comes with the `When a resource event occurs` action, that is triggered when an Azure Event Grid subscription receives the subscribed event.
+
+<div class="info" data-title="Note">
+
+> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in > the Storage Account, following default naming conventions.
+> The subscription will initially remain in the `Creating` state.
+
+</div>
 
 <div class="task" data-title="Tasks">
 
->- Check the configuration of the Event Grid trigger in the Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb` and save the workflow to create the Event Grid subscription.
+> - Check the Logic App `loa-proc-lab-no-ipa-[randomId]`, and confirm the configuration of the Event Grid trigger workflow `wf_orders_from_sa_to_sb`.
+> - Do a modification by adding a whitespace in the subscription textbox
+> - Save the workflow once confirmed to create the Event Grid System Topic subscription automatically.
 
 </div>
 
@@ -207,30 +270,35 @@ It comes with one action "When a resource event occurs", that is triggered when 
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sa_to_sb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the trigger `When a resource event occurs`
->- Make sure that the Resource Id corresponds to your Storage Account where the file will be uploaded and that the Event type is **Microsoft.Storage.BlobCreated**
->- In the `Subscription` textbox, add a space
->- Save the workflow
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sa_to_sb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Select the `When a resource event occurs` trigger.
+> - Make sure that the Resource Id corresponds to your Storage Account where the file will be uploaded and that the Event type is **Microsoft.Storage.BlobCreated**
+> - In the `Subscription` textbox, add a space
+> - Save the workflow
 
-You should see the following RBAC configuration in your Storage Account :
+You should see the following :
 
-![IAM](assets/lab1/image-1.png)
+![LogicApp Designer Trigger](assets/lab1/image-2.png)
 
 </details>
 
 ### Check the Event Grid subscription in the Event Grid System Topic
 
-When we save the workflow for the first time, an Event Grid subscription will be created in the Storage Account automatically with some default naming convention, and it will be in 'Creating' state.
 We will see in the next step why and how to validate the subscription.
-In the meatime, let's have a look to the Event Grid subscription.
+In the meatime, let's have a look at the Event Grid subscription.
+
+<div class="info" data-title="Note">
+
+> A **subscription** tells Event Grid which events on a topic you're interested in receiving. When creating a subscription, you provide an endpoint for handling the event. Endpoints can be a webhook or an Azure service resource.
+
+</div>
 
 <div class="task" data-title="Tasks">
 
->- Check the configuration of the Event Grid subscription in the Storage Account `stdatalabnoipa[randomid]`.
+> - Check the configuration of the Event Grid subscription in the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -238,54 +306,42 @@ In the meatime, let's have a look to the Event Grid subscription.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
->- In the left-hand menu, click on Events.
+> - Navigate to the Storage Account `stdatalabnoipa[randomid]`.
+> - In the left-hand menu, click on Events.
+> - Click on the name of the Subscription on the bottom of the page.
 
 You should see the following configurations in Event Grid Subscription :
 
 ![Event Grid Subscription Overview](assets/lab1/image-8.png)
-
-</details>
-
-<div class="task" data-title="Tasks">
-
-> Check the configuration of the Event Grid subscription in the Storage Account `stdatalabnoipa[randomid]`.
-
-</div>
-
-<details>
-
-<summary> Toggle solution</summary>
-
->- Click on the name of the Subscription on the bottom of the page.
-
-You should see the following configurations in Event Grid Subscription :
-
-![Event Grid Subscription Detail](assets/lab1/image-9.png)
+![Event Grid Subscription Details](assets/lab1/image-9.png)
 
 </details>
 
 ### Check the Webhook validation condition
 
-After the event is received, we add an action to parse the json event with the event grid schema. We can get the schema from [here](https://learn.microsoft.com/en-us/azure/event-grid/event-schema#event-schema).
-The input to Parse JSON step is :
+We will now be able to receive new events coming from the Event Grid System Topic when new blobs are uploaded, and trigger the Logic Apps workflow accordingly.
 
+Before processing the Event Grid event, it is essential to validate the webhook to ensure that our workflow is the correct subscriber to the events in the Storage Account and to establish a trusted connection. 
+Until we do not validate this event, the subscription will remain in the 'Creating' state.
+To validate the event, we are using the Response action: `Response Validation Webhook`.
+
+We will add an action to parse the json event with the event grid schema. We can get the schema from [here](https://learn.microsoft.com/en-us/azure/event-grid/event-schema#event-schema).
+Adding the `Parse JSON` helps us validating the structure of the incoming Event Grid event and makes it easier to reference specific properties in subsequent steps.
+
+The input to `Parse JSON` step is :
 `@triggerBody()`
 
-We add a condition step after, to check whether the event is a subscription Validation event or not. Condition is:
+After that `Parse JSON` step, we have a condition step, to check whether the event is a subscription Validation event or not. Condition is:
 
 `"equals": [
           "@body('Parse_JSON')[0]?['eventType']",
           "Microsoft.EventGrid.SubscriptionValidationEvent"
         ]`
 
-The reason we need to do this is to validate that our workflow is the correct subscriber to the events in the Storage Account. This is a security mechanism, to avoid untrusted subscribers to our Storage Account.  
-Until we do not validate this event, the subscription will remain in the 'Creating' state.
-To validate the event, we are using the Response action: `Response Validation Webhook`.
-
 <div class="task" data-title="Tasks">
 
->- Check the configuration of the Condition action in the Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb`.
+>- Check the configuration of the `Parse JSON` to ensure the JSON schema referenced in the step is matching the documentation [here](https://learn.microsoft.com/en-us/azure/event-grid/event-schema#event-schema)
+>- Check the configuration of the `Condition` action in the Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb`.
 
 </div>
 
@@ -293,13 +349,18 @@ To validate the event, we are using the Response action: `Response Validation We
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sa_to_sb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the condition `Condition`
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sa_to_sb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Click on the step `Parse JSON`
+> - Click on the condition `Condition`
 
-You should see the following configuration in your Condition :
+You should see the following configuration in your `Parse JSON` step :
+
+![Logic App Parse JSON](assets/lab1/image-21.png)
+
+You should see the following configuration in your `Condition` step :
 
 ![Logic App Condition](assets/lab1/image-4.png)
 
@@ -307,40 +368,13 @@ You should see the following configuration in your Condition :
 
 ## Process the event (5 min)
 
-### Check Logic App permission to access Storage Account
-
-The Storage Account is used to store data objects, including blobs, file shares, queues, tables, and disks. In our lab, it is used to store the sample order JSON file inside an `inputfiles` container.
-
-The Logic App needs to access the Storage Account to retrieve the JSON file, and for the Event Grid trigger connector to list the available Storage Accounts in the Subscription.
-Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Storage Account.
-
-<div class="task" data-title="Tasks">
-
->- Check that correct RBAC configuration is applied in the Storage Account `stdatalabnoipa[randomid]`:
-
-</div>
-
-<details>
-
-<summary> Toggle solution</summary>
-
->- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
->- In the left-hand menu, click on `Access Control (IAM)`.
->- From the top-menu bar, click on Role Assignment and check that Logic App `loa-proc-lab-no-ipa-[randomId]` has the **Storage Blob Data Contributor** role.
-
-You should see the following RBAC configuration in your Storage Account :
-
-![Storage Account IAM](assets/lab1/image-3.png)
-
-</details>
-
 ### Retrieve file content
 
 To retrieve the content of the file that will be uploaded in the `inputfiles` container, we are using the `Azure Blob Storage` connector and `Read blob content` action.
 
 <div class="task" data-title="Tasks">
 
->- Check the configuration of the `Read blob content` action in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb`:
+> - Check the configuration of the `Read blob content` action in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb`:
 
 </div>
 
@@ -348,12 +382,12 @@ To retrieve the content of the file that will be uploaded in the `inputfiles` co
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sa_to_sb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the action `Read blob content`.
->- Make sure that the Container Name is set to `inputfiles` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sa_to_sb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Click on the action `Read blob content`.
+> - Confirm the Container Name is set to `inputfiles` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
 
 You should see the following configuration in your action :
 
@@ -366,7 +400,8 @@ You should see the following configuration in your action :
 ### Publish/Subscribe design pattern
 
 The Publish/Subscribe (Pub/Sub) design pattern enables a decoupled communication model where publishers send messages to a central broker, and subscribers receive only the messages they are interested in, based on topics subscriptions.
-This approach is well-suited for systems requiring loose coupling between components, such as event-driven architectures, when an application needs to broadcast information to multiple consumers, particularly if they operate independently, use different technologies, or have varying availability and response time requirements.
+
+This approach is well-suited for systems requiring loosely coupled components, such as event-driven architectures. It enables scenarios with applications broadcasting information to multiple consumers, particularly if they operate independently, use different technologies, or have varying availability and response time requirements.
 
 <div class="info" data-title="Note">
 
@@ -377,15 +412,15 @@ This approach is well-suited for systems requiring loose coupling between compon
 ![Pub Sub pattern](assets/lab1/image-6.png)
 
 Azure Service Bus is a good solution for implementing the Publish/Subscribe pattern as it provides robust messaging capabilities, including topic-based subscriptions, reliable message delivery, and support for diverse protocols and platforms.
-Its built-in features, such as message filtering, dead-letter queues, and transactional processing, make it ideal for building scalable, decoupled, and fault-tolerant systems.
+The built-in features of this Message broker, such as message filtering, dead-letter queues, and transactional processing, make it ideal for building scalable, decoupled, and fault-tolerant systems guaranteeing the message processing.
 
 ### Check Logic App permission to access Service Bus
 
-The Logic App needs to access the Service Bus to publish the message (content of the file). Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Service Bus.
+The Logic App needs to access the Service Bus resource to publish the message (content of the file). Since we want to use Managed Identities to secure the connection between our Azure Resources, let's check how it is configured in the Service Bus.
 
 <div class="task" data-title="Tasks">
 
->- Check that correct RBAC configuration is applied in the Service Bus `sb-lab-no-ipa-[randomid]`:
+> - Confirm the correct RBAC configuration is applied in the Service Bus `sb-lab-no-ipa-[randomid]`:
 
 </div>
 
@@ -393,9 +428,9 @@ The Logic App needs to access the Service Bus to publish the message (content of
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Service Bus `sb-lab-no-ipa-[randomid]`.
->- In the left-hand menu, click on `Access Control (IAM)`.
->- From the top-menu bar, click on Role Assignment and check that Logic App `loa-proc-lab-no-ipa-[randomId]` has the **Service Bus Data Receiver** and **Service Bus Data Sender** roles.
+> - Navigate to the Service Bus `sb-lab-no-ipa-[randomid]`.
+> - In the left-hand menu, click on `Access Control (IAM)`.
+> - From the top-menu bar, click on Role Assignment and confirm that Logic App `loa-proc-lab-no-ipa-[randomId]` has the **Service Bus Data Receiver** and **Service Bus Data Sender** roles.
 
 You should see the following RBAC configuration in your Service Bus Namespace :
 
@@ -410,7 +445,7 @@ To do that, we are using the `Service Bus` connector and `Send message to a queu
 
 <div class="task" data-title="Tasks">
 
->- Check the configuration of the `Send message to a queue or topic` action in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb`:
+> - Check the configuration of the `Send message to a queue or topic` action in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sa_to_sb`:
 
 </div>
 
@@ -418,12 +453,12 @@ To do that, we are using the `Service Bus` connector and `Send message to a queu
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sa_to_sb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the action `Send message`.
->- Make sure that the Container Name is set to `inputfiles` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sa_to_sb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Click on the action `Send message`.
+> - Make sure that the Container Name is set to `inputfiles` and that the Blob Name is set to `last(split(items('For_each')['subject'], '/'))`.
 
 You should see the following configuration in your action :
 
@@ -436,17 +471,17 @@ The next section will focus on the subscription to this message and its processi
 
 ## Subscribe to the message (5 min)
 
-Next step is to retrieve the message from the Service Bus in order to process it later. In the Pub/Sub pattern previously explained, this is the Subscription part.
-We will build a workflow that will be triggered when a new message is available in the dedicated Service Bus subscription, containing our message.
+Next step is to subscribe to the Service Bus queue where the messages are published to be able to process them later.
+We will build a workflow that will be triggered when a new message is available in the dedicated Service Bus queue, containing our message.
 
 ### Configure the Service Bus trigger in Logic App
 
-In this step, will will configure the Logic App `Service Bus` connector and trigger `When messages are available in a topic`.
+In this step, we will configure the Logic App `Service Bus` connector and trigger `When messages are available in a topic`.
 As the Service Bus connection configuration is already done, we will focus on the creation and configuration of the trigger itself.
 
 <div class="task" data-title="Tasks">
 
->- Create and configure the Service Bus trigger in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
+> - Create and configure the Service Bus trigger in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
 
 </div>
 
@@ -454,15 +489,15 @@ As the Service Bus connection configuration is already done, we will focus on th
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sb_to_cdb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the `Add a trigger` button.
->- In the triggers list search for `Service Bus` and select the `When messages are available in a topic` trigger.
->- In the Topic Name dropdown list, select the `topic-flighbooking` topic.
->- In the Subscription Name dropdown list, select the `sub-flighbooking-cdb` subscription.
->- Once everything is set, click on the Save button on the top left corner.
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sb_to_cdb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Click on the `Add a trigger` button.
+> - In the `triggers` list search for `Service Bus` and select the `When messages are available in a topic` trigger.
+> - In the Topic Name dropdown list, select the `topic-orders` topic.
+> - In the Subscription Name dropdown list, select the `sub-orders-cdb` subscription.
+> - Once everything is set, click on the Save button on the top left corner.
 
 The trigger operation should look like this :
 
@@ -474,54 +509,123 @@ The trigger operation should look like this :
 
 ### Message Transformation
 
-Message transformation in orchestration workflows is essential to ensure compatibility between systems that may use different data formats, structures, or conventions.
+Message transformation in orchestration workflows is essential to ensure interoperability between systems that may use different data formats, structures, or conventions.
 Target systems often have specific requirements for how data should be presented, such as field naming, value types, or schema validation.
 Transformations also help enrich messages by adding necessary data or filtering out unnecessary information, optimizing the payload for the target system.
 This step ensures seamless integration, reduces errors, and improves the reliability of communication across disparate systems.
 
 In Logic Apps, you can transform messages using built-in connectors (e.g., JSON, XML, or flat file parsing), Liquid templates for complex JSON mapping, Data Mapper or Transform XML for complex XML mapping and Azure Functions or Inline Code for custom transformations.
 Additionally, Logic Apps supports external tools like Azure API Management for preprocessing.
-[Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
+
+<div class="info" data-title="Note">
+
+> [Follow this link](https://learn.microsoft.com/en-us/azure/logic-apps/create-maps-data-transformation-visual-studio-code) for more details about message transformation in Logic Apps.
+
+</div>
 
 ### Configure the transform action in Logic App
 
-We need to transform the initial message to a simplified format that is expected by the target system.
+We need to transform the initial message to a simplified JSON schema that is expected by the target system.
 By consolidating passenger names into a list and focusing on key flight and payment details, we make the data more compact and easier for the target system to process.
 
-This is the message expected by the target system:
+This is the message JSON format sent by the source system:
 
 ```json
 {
-    "transformedBooking": {
-        "bookingId": "B12345678",
-        "passengerNames": {
-            "name": [
-                "John Doe",
-                "Jane Doe"
-            ]
-        },
-        "flightDetails": {
-            "flightNumber": "UA123",
-            "departure": "SFO",
-            "arrival": "JFK",
-            "departureDate": "2022-02-15T08:00:00Z"
-        },
-        "payment": {
-            "cardType": "Visa",
-            "amountPaid": "500"
-        }
-    }
+  "booking": {
+		  "bookingId": "B12345678",
+		  "bookingDate": "2022-02-08T12:00:00Z",
+		  "passengers": [
+			{
+			  "firstName": "John",
+			  "lastName": "Doe",
+			  "email": "johndoe@example.com",
+			  "dob": "1990-01-01",
+			  "gender": "M",
+			  "address": {
+				"street": "123 Main St",
+				"city": "Anytown",
+				"state": "CA",
+				"postalCode": "12345",
+				"country": "USA"
+			  },
+			  "phoneNumber": "+1 555-555-5555"
+			},
+			{
+			  "firstName": "Jane",
+			  "lastName": "Doe",
+			  "email": "janedoe@example.com",
+			  "dob": "1992-03-15",
+			  "gender": "F",
+			  "address": {
+				"street": "456 Second St",
+				"city": "Anycity",
+				"state": "CA",
+				"postalCode": "67890",
+				"country": "USA"
+			  },
+			  "phoneNumber": "+1 555-555-5556"
+			}
+		  ],
+		  "flight": {
+			"flightNumber": "UA123",
+			"origin": "SFO",
+			"destination": "JFK",
+			"departureDate": "2022-02-15T08:00:00Z",
+			"arrivalDate": "2022-02-15T16:00:00Z",
+			"airline": "United Airlines",
+			"fareClass": "Economy",
+			"farePrice": 250.00
+		  },
+		  "payment": {
+			"cardType": "Visa",
+			"cardNumber": "**** **** **** 1234",
+			"expirationDate": "03/24",
+			"billingAddress": {
+			  "street": "789 Third St",
+			  "city": "Anyvillage",
+			  "state": "CA",
+			  "postalCode": "24680",
+			  "country": "USA"
+			},
+			"totalPrice": 500.00
+		  }
+	}
 }
 ```
 
-We need to transform the message from JSON to XML because XSLT is designed to operate on XML data.
-Since XSLT requires XML as input to perform transformations, converting the JSON message into XML format allows us to leverage XSLTs powerful capabilities to manipulate and restructure the data as needed for the target system.
+This is the message JSON format expected by the target system:
+
+```json
+{
+  "transformedBooking": {
+    "bookingId": "B12345678",
+    "passengerNames": {
+      "name": ["John Doe", "Jane Doe"]
+    },
+    "flightDetails": {
+      "flightNumber": "UA123",
+      "departure": "SFO",
+      "arrival": "JFK",
+      "departureDate": "2022-02-15T08:00:00Z"
+    },
+    "payment": {
+      "cardType": "Visa",
+      "amountPaid": "500"
+    }
+  }
+}
+```
+
+While there are many solutions to transform a JSON object in Logic Apps, we want to showcase the use of the `Transform XML` action, which leverages the powerful capabilities of XSLT—a widely used language in the integration world—to manipulate and restructure data effectively.
+
+The use of XSLT requires to manipulate XML data, so we'll need to first transform the Json to an XML format, to apply the XSLT transformation, and back to a Json formatted data for the target system.
 
 We will use a `Compose` action with a function to transform the JSON message into an XML format.
 
 <div class="task" data-title="Tasks">
 
->- Configure a `Compose` action with a function to transform JSON into XML in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
+> - Configure a `Compose` action with a function to transform JSON into XML in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
 
 </div>
 
@@ -529,14 +633,14 @@ We will use a `Compose` action with a function to transform the JSON message int
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sb_to_cdb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the `+` button, select `Add an action` and search for `Compose` from the list of actions.
->- In the Inputs field of the Compose action, click on the `fx` icon and enter the following function: `xml(json(triggerBody()?['contentData']))`.
->- Rename the action `JSON to XML`
->- Once everything is set, click on the Save button at the top left corner.
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sb_to_cdb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Click on the `+` button, select `Add an action` and search for `Compose` from the list of actions.
+> - In the `Inputs` field of the Compose action, click on the `fx` icon and enter the following function: `xml(json(triggerBody()?['contentData']))`.
+> - Rename the action `JSON to XML`
+> - Once everything is set, click on the Save button at the top left corner.
 
 The Compose action should look like this :
 
@@ -544,11 +648,11 @@ The Compose action should look like this :
 
 </details>
 
-We will then use a `Transform XML` action to transform the XML message into the desired output.
+We will then use a `Transform XML` action to transform the XML message into the desired format.
 
 <div class="task" data-title="Tasks">
 
->- Configure a `Transform XML` action using an XSLT file  in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
+> - Configure a `Transform XML` action, with the `transformation_orders` XSLT Map in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
 
 </div>
 
@@ -556,12 +660,12 @@ We will then use a `Transform XML` action to transform the XML message into the 
 
 <summary> Toggle solution</summary>
 
->- Click on the `+` button, select `Add an action` and search for `Transform XML` from the list of actions.
->- In the Content field, click on the `fx` icon and enter the following text: `outputs('JSON_to_XML')`.
->- In the Map Source dropdown list, select `LogicApp`.
->- In the Map Name dropdown list, select `transformation_orders`.
->- Rename the action `Transform XML`
->- Once everything is set, click on the Save button at the top left corner.
+> - Click on the `+` button, select `Add an action` and search for `Transform XML` from the list of actions.
+> - In the Content field, click on the `fx` icon and enter the following text: `outputs('JSON_to_XML')`.
+> - In the Map Source dropdown list, select `LogicApp`.
+> - In the Map Name dropdown list, select `transformation_orders`.
+> - Rename the action `Transform XML`
+> - Once everything is set, click on the Save button at the top left corner.
 
 The Transform XML action should look like this :
 
@@ -569,11 +673,11 @@ The Transform XML action should look like this :
 
 </details>
 
-We will now use a `Compose` action with a function to transform the XML transformed message into a JSON format before sending it to the target.
+We will now use a `Compose` action with a function to transform the XML transformed message back to a lighter JSON format before sending it to the target.
 
 <div class="task" data-title="Tasks">
 
->- Configure a `Compose` action with a function to transform JSON into XML  in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
+> - Configure a `Compose` action with a function to transform JSON into XML in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`:
 
 </div>
 
@@ -581,10 +685,10 @@ We will now use a `Compose` action with a function to transform the XML transfor
 
 <summary> Toggle solution</summary>
 
->- Click on the `+` button, select `Add an action` and search for `Compose` from the list of actions.
->- In the Inputs field of the Compose action, click on the `fx` icon and enter the following function: `json(body('Transform_XML'))`.
->- Rename the action `XML to JSON`
->- Once everything is set, click on the Save button at the top left corner.
+> - Click on the `+` button, select `Add an action` and search for `Compose` from the list of actions.
+> - In the Inputs field of the Compose action, click on the `fx` icon and enter the following function: `json(body('Transform_XML'))`.
+> - Rename the action `XML to JSON`
+> - Once everything is set, click on the Save button at the top left corner.
 
 The Compose action should look like this :
 
@@ -603,7 +707,7 @@ We will use a `Compose` action to generate a unique identifier and append an `id
 
 <div class="task" data-title="Tasks">
 
->- Configure a `Compose` action to generate a UUID and append the id property in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`.
+> - Configure a `Compose` action to generate a UUID and append the id property in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`.
 
 </div>
 
@@ -611,10 +715,10 @@ We will use a `Compose` action to generate a unique identifier and append an `id
 
 <summary> Toggle solution</summary>
 
->- Click on the `+` button, select `Add an action` and search for `Compose`.
->- In the Inputs textbox, click on the `fx` icon and enter the following text : `addProperty(outputs('XML_to_JSON'), 'id', guid())`
->- Rename the action `Append id property and generate UUID`
->- Once everything is set, click on the Save button on the top left corner.
+> - Click on the `+` button, select `Add an action` and search for `Compose`.
+> - In the Inputs textbox, click on the `fx` icon and enter the following text : `addProperty(outputs('XML_to_JSON'), 'id', guid())`
+> - Rename the action `Append id property and generate UUID`
+> - Once everything is set, click on the Save button on the top left corner.
 
 The Compose action should look like this :
 
@@ -630,7 +734,7 @@ We will now see how to retrieve this key for integration into our configuration.
 
 <div class="task" data-title="Tasks">
 
->- Retrieve the Cosmos DB Primary Connection String from `cos-lab-no-ipa-[randomid]` Cosmos DB account:
+> - Retrieve the Cosmos DB Primary Connection String from `cos-lab-no-ipa-[randomid]` Cosmos DB account:
 
 </div>
 
@@ -638,11 +742,11 @@ We will now see how to retrieve this key for integration into our configuration.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Cosmos DB account `cos-lab-no-ipa-[randomid]`.
->- In the left-hand menu, click on Keys under the Settings section.
->- In the Keys section, locate the Primary Key.
->- Copy the Primary Key by clicking the copy icon next to it.
->- The key is now ready to be used in your Logic App configuration.
+> - Navigate to the Cosmos DB account `cos-lab-no-ipa-[randomid]`.
+> - In the left-hand menu, click on Keys under the Settings section.
+> - In the Keys section, locate the Primary Key.
+> - Copy the Primary Key by clicking the copy icon next to it.
+> - The key is now ready to be used in your Logic App configuration.
 
 You should see the following Credentials :
 
@@ -657,7 +761,7 @@ First, we need to configure the connection to our CosmosDB account.
 
 <div class="task" data-title="Tasks">
 
->- Configure the connection to CosmosDB for using the `Create or update item` connector in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`.
+> - Configure the connection to CosmosDB for using the `Create or update item` connector in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb`.
 
 </div>
 
@@ -665,13 +769,13 @@ First, we need to configure the connection to our CosmosDB account.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
->- In the left-hand menu, click on `Workflows` from the `Workflows` section.
->- Open the workflow `wf_orders_from_sb_to_cdb`.
->- In the left-hand menu, click on `Designer` from the `Developer` section.
->- Click on the `+` button, select `Add an action` and search for `Cosmos DB`.
->- Select `Create or update item`
->- Set the connection with your Cosmos Db Instance: Select the Access Key authentication type and set the primary key that you retrieved in the previous step
+> - Navigate to the Logic App `loa-proc-lab-no-ipa-[randomId]`.
+> - In the left-hand menu, click on `Workflows` from the `Workflows` section.
+> - Open the workflow `wf_orders_from_sb_to_cdb`.
+> - In the left-hand menu, click on `Designer` from the `Developer` section.
+> - Click on the `+` button, select `Add an action` and search for `Cosmos DB`.
+> - Select `Create or update item`
+> - Set the connection with your Cosmos Db Instance: Select the Access Key authentication type and set the primary key that you retrieved in the previous step
 
 The configuration should look like that:
 
@@ -679,13 +783,13 @@ The configuration should look like that:
 
 </details>
 
-Once the connection is set-up, we can configure the action.
+Once the connection is set up, we can configure the action.
 We are now ready to send our message to our CosmosDB account.  
-To do so, we need to configure our `Create or update item` connector.
+To do so, we need to configure the `Create or update item` connector.
 
 <div class="task" data-title="Tasks">
 
->- Configure the `Create or update item` action to create a new document in CosmosDB in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb.
+> - Configure the `Create or update item` action to create a new document in CosmosDB in Logic App `loa-proc-lab-no-ipa-[randomId]` workflow `wf_orders_from_sb_to_cdb.
 
 </div>
 
@@ -693,12 +797,12 @@ To do so, we need to configure our `Create or update item` connector.
 
 <summary> Toggle solution</summary>
 
->- In the Database Id textbox, enter the following text : `orders`
->- In the Container Id textbox, enter the following text : `toprocess`
->- In the Item textbox, click on the `lightning` button and select `Outputs` from the previous action `Append id property and generate UUID`
->- Once everything is set, click on the Save button on the top left corner.
+> - In the Database Id textbox, enter the following text : `orders`
+> - In the Container Id textbox, enter the following text : `toprocess`
+> - In the Item textbox, click on the `lightning` button and select `Outputs` from the previous action `Append id property and generate UUID`
+> - Once everything is set, click on the Save button on the top left corner.
 
-The action should look like this :
+The action should look like this:
 
 ![Create Or Update Item](assets/lab1/image-16.png)
 
@@ -715,7 +819,7 @@ You can download the JSON file from here: [Download sample JSON file](assets/sam
 
 <div class="task" data-title="Tasks">
 
->- Upload the file in the Storage Account `stdatalabnoipa[randomid]`.
+> - Upload the file in the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -723,11 +827,11 @@ You can download the JSON file from here: [Download sample JSON file](assets/sam
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Storage Account `stdatalabnoipa[randomid]`.
->- In the left-hand menu, click on `Storage browser` and select `Blob containers`.
->- Click on the `inputfiles` container.
->- From the top-menu bar, click on the `Upload` button, click on `Browse for files` and select the `sample_order.json` file from your Storage Explorer.
->- Click on the `Upload` button below.
+> - Navigate to the Storage Account `stdatalabnoipa[randomid]`.
+> - In the left-hand menu, click on `Storage browser` and select `Blob containers`.
+> - Click on the `inputfiles` container.
+> - From the top-menu bar, click on the `Upload` button, click on `Browse for files` and select the `sample_order.json` file from your Storage Explorer.
+> - Click on the `Upload` button below.
 
 You should see your file in the container:
 
@@ -739,7 +843,7 @@ Finally, let's check if our message is stored in our CosmosDB container.
 
 <div class="task" data-title="Tasks">
 
->- Check the document created in CosmosDB `cos-lab-no-ipa-[randomid]`.
+> - Check the document created in CosmosDB `cos-lab-no-ipa-[randomid]`.
 
 </div>
 
@@ -747,10 +851,10 @@ Finally, let's check if our message is stored in our CosmosDB container.
 
 <summary> Toggle solution</summary>
 
->- Navigate to the Cosmos DB account `cos-lab-no-ipa-[randomid]`.
->- In the left-hand menu, click on `Data explorer` and click on `orders` to open the database
->- Click on `toprocess` to open the container
->- Click on `Items` and select the first line
+> - Navigate to the Cosmos DB account `cos-lab-no-ipa-[randomid]`.
+> - In the left-hand menu, click on `Data explorer` and click on `orders` to open the database
+> - Click on `toprocess` to open the container
+> - Click on `Items` and select the first line
 
 You should see your transformed message in the `toprocess` container:
 
@@ -758,20 +862,28 @@ You should see your transformed message in the `toprocess` container:
 
 </details>
 
+<div class="info" data-title="Note">
+
+> If you don't see your message in CosmosDB, please re-upload the file. The first time you upload a file to the blob storage, Event Grid sends the validation event multiple times to the Logic App until it receives validation. Once validated, Event Grid will start sending actual events, which may require re-uploading the file.
+
+</div>
+
 ---
 
 # Lab 2 : Sync and async patterns with Azure Functions and Service Bus (45m)
 
-In the previous lab, we have added orders to CosmosDB.
-In this lab, we will focus on processing and fetching these orders by implementing 2 workflows:
+In the previous lab, we have added orders to a CosmosDB database.
+In this lab, we will focus on processing and fetching these orders by implementing two workflows:
 
-- Processing orders asynchronously using Azure Functions and Service Bus
-- Fetching and serving order synchronously va HTTP using Azure Functions
+1. Processing orders asynchronously using Azure Functions and Service Bus
+2. Fetching and serving order synchronously via HTTP using Azure Functions
 
 As a reminder, you are now going to use:
 
 - **Azure Functions**: A serverless compute service that allows you to run event-driven code without managing infrastructure.
 - **Azure Service Bus**: A messaging service that enables reliable communication between distributed applications and services.
+
+![Architecture diagram lab 2](./assets/lab2/architecture-schema-lab2.png)
 
 ## Queueing orders in Service Bus
 
@@ -790,6 +902,7 @@ The data processing function app (with a name starting with `func-proc-lab`) sho
 > - You can use the environment variables `SERVICEBUS_QUEUE`, and `SB_ORDERS__fullyQualifiedNamespace` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-<SUFFIX>`
 >
 > - You can leverage the [Service Bus output binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript)
+
 </div>
 
 <details>
@@ -801,24 +914,24 @@ In the file `src/dataprocessing/src/functions/QueueOrders.js`, uncomment the lin
 Your code should look like:
 
 ```js
-const { app, output } = require('@azure/functions');
+const { app, output } = require("@azure/functions");
 
 const serviceBusOutput = output.serviceBusQueue({
-    queueName: '%SERVICEBUS_QUEUE%',
-    connection: 'SB_ORDERS',
+  queueName: "%SERVICEBUS_QUEUE%",
+  connection: "SB_ORDERS",
 });
 
-app.cosmosDB('QueueOrders', {
-    databaseName: '%COSMOS_DB_DATABASE_NAME%',
-    containerName: '%COSMOS_DB_TO_PROCESS_CONTAINER_NAME%',
-    connection: 'COSMOS_DB',
-    createLeaseContainerIfNotExists: true,
-    return: serviceBusOutput,
-    handler: (orders, context) => {
-        context.log(`Queueing ${orders.length} orders to process`);
-        context.log(`Orders: ${JSON.stringify(orders)}`);
-        return orders;
-    },
+app.cosmosDB("QueueOrders", {
+  databaseName: "%COSMOS_DB_DATABASE_NAME%",
+  containerName: "%COSMOS_DB_TO_PROCESS_CONTAINER_NAME%",
+  connection: "COSMOS_DB",
+  createLeaseContainerIfNotExists: true,
+  return: serviceBusOutput,
+  handler: (orders, context) => {
+    context.log(`Queueing ${orders.length} orders to process`);
+    context.log(`Orders: ${JSON.stringify(orders)}`);
+    return orders;
+  },
 });
 ```
 
@@ -877,31 +990,31 @@ In the file `src/dataprocessing/src/functions/ProcessOrders.js`, uncomment the l
 Your code should look like:
 
 ```js
-const { app, output } = require('@azure/functions');
+const { app, output } = require("@azure/functions");
 
 const cosmosOutput = output.cosmosDB({
-    databaseName: '%COSMOS_DB_DATABASE_NAME%',
-    containerName: '%COSMOS_DB_PROCESSED_CONTAINER_NAME%',
-    connection: 'COSMOS_DB',
+  databaseName: "%COSMOS_DB_DATABASE_NAME%",
+  containerName: "%COSMOS_DB_PROCESSED_CONTAINER_NAME%",
+  connection: "COSMOS_DB",
 });
 
-app.serviceBusQueue('ProcessOrders', {
-    queueName: '%SERVICEBUS_QUEUE%',
-    connection: 'SB_ORDERS',
-    return: cosmosOutput,
-    handler: async (order, context) => {
-        context.log(`Order to process: ${JSON.stringify(order)}`);
+app.serviceBusQueue("ProcessOrders", {
+  queueName: "%SERVICEBUS_QUEUE%",
+  connection: "SB_ORDERS",
+  return: cosmosOutput,
+  handler: async (order, context) => {
+    context.log(`Order to process: ${JSON.stringify(order)}`);
 
-        const processedOrder = {
-            ...order,
-            status: 'processed',
-            processedAt: new Date().toISOString(),
-        };
+    const processedOrder = {
+      ...order,
+      status: "processed",
+      processedAt: new Date().toISOString(),
+    };
 
-        context.log(`Processed order: ${JSON.stringify(processedOrder)}`);
+    context.log(`Processed order: ${JSON.stringify(processedOrder)}`);
 
-        return processedOrder;
-    },
+    return processedOrder;
+  },
 });
 ```
 
@@ -958,31 +1071,31 @@ In the file `src/datafetching/src/functions/FetchOrders.js`, uncomment the line 
 Your code should look like:
 
 ```js
-const { app, input } = require('@azure/functions');
+const { app, input } = require("@azure/functions");
 
 const cosmosInput = input.cosmosDB({
-    databaseName: '%COSMOS_DB_DATABASE_NAME%',
-    containerName: '%COSMOS_DB_CONTAINER_NAME%',
-    connection: 'COSMOS_DB',
-    sqlQuery: 'SELECT * FROM c ORDER BY c._ts DESC OFFSET 0 LIMIT 50',
+  databaseName: "%COSMOS_DB_DATABASE_NAME%",
+  containerName: "%COSMOS_DB_CONTAINER_NAME%",
+  connection: "COSMOS_DB",
+  sqlQuery: "SELECT * FROM c ORDER BY c._ts DESC OFFSET 0 LIMIT 50",
 });
 
-app.http('FetchOrders', {
-    methods: ['GET'],
-    authLevel: 'anonymous',
-    extraInputs: [cosmosInput],
-    handler: async (request, context) => {
-        let orders = [];
-        context.log('Fetching orders...');
+app.http("FetchOrders", {
+  methods: ["GET"],
+  authLevel: "anonymous",
+  extraInputs: [cosmosInput],
+  handler: async (request, context) => {
+    let orders = [];
+    context.log("Fetching orders...");
 
-        orders = context.extraInputs.get(cosmosInput);
+    orders = context.extraInputs.get(cosmosInput);
 
-        context.log(`Found ${orders?.length} orders...`);
+    context.log(`Found ${orders?.length} orders...`);
 
-        return {
-            jsonBody: orders,
-        };
-    }
+    return {
+      jsonBody: orders,
+    };
+  },
 });
 ```
 
@@ -1022,7 +1135,8 @@ In this lab, you learned how to process and fetch orders using Azure Functions a
 
 For this Lab, we will focus on the following scope :
 
-![Global process](assets/lab3/lab3-scope.jpg)
+![Architecture diagram lab 3](./assets/lab3/architecture-schema-lab3.png)
+
 
 ## Expose an API (5 minutes)
 
@@ -1032,22 +1146,24 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 2. On the left pane click on `APIS`
 3. Then, click on `+ Add API` and on the group `Create from Azure resource` select the tile `Function App`
 
-    ![Add an API](assets/lab3/part1-step3.jpg)
+   ![Add an API](assets/lab3/part1-step3.jpg)
 
 4. In the window that opens :
-    - For the field `Function App`, click on `Browse`
-    - Then on the windows that opens :
-    - On _Configure required settings_, click on `Select` and choose your **Function App**
 
-        ![Function settings](assets/lab3/part1-step4_2.jpg)
+   - For the field `Function App`, click on `Browse`
+   - Then on the windows that opens :
+   - On _Configure required settings_, click on `Select` and choose your **Function App**
 
-    - Be sure the function `FetchOrders` is select and click on `Select`
+     ![Function settings](assets/lab3/part1-step4_2.jpg)
 
-        ![Function selection](assets/lab3/part1-step4_3.jpg)
+   - Be sure the function `FetchOrders` is select and click on `Select`
+
+     ![Function selection](assets/lab3/part1-step4_3.jpg)
 
 5. Replace the values for the fields with the following values :
-      - **Display name**: `Orders API`
-      - **API URL suffix**: `orders`
+
+   - **Display name**: `Orders API`
+   - **API URL suffix**: `orders`
 
 6. Click on `Create`
 
@@ -1059,13 +1175,11 @@ In this first step, we will learn how to expose an API on Azure APIM. We will pu
 
 </div>
 
-
 <details>
 
 <summary> Toggle solution</summary>
 
-> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send`
->![Test the API](assets/lab3/part1.jpg)
+> Test it by clicking on the `Test` tab. On the displayed screen, select your operation and click on `Send` >![Test the API](assets/lab3/part1.jpg)
 
 </details>
 
@@ -1075,28 +1189,28 @@ Now the API is published, we will learn how to create a **Product** we will use 
 
 1. On the APIM screen, in the menu on the left, click on `Products`, then click on `+ Add`.
 
-    ![Product](assets/lab3/part2-step1.jpg)
+   ![Product](assets/lab3/part2-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
-    - **Display name**: `Basic`
-    - **Description**: Enter your description.
-    - **Check the following boxes**:
-      - `Published`
-      - `Requires Subscription`
 
-    ![Product creation](assets/lab3/part2-step2.jpg)
+   - **Display name**: `Basic`
+   - **Description**: Enter your description.
+   - **Check the following boxes**:
+     - `Published`
+     - `Requires Subscription`
+
+   ![Product creation](assets/lab3/part2-step2.jpg)
 
 3. Select the created product from the list and click on it.
 
 4. On the next screen, click on `+ Add API`. In the right-hand menu that appears, select the API `Orders API` (the one create on the step 1) and then click `Select`.
 
-    ![Product - Add an API](assets/lab3/part2-step4.jpg)
+   ![Product - Add an API](assets/lab3/part2-step4.jpg)
 
 5. Select `Access control` from the menu on the left.
 6. Click on `+ Add group`, then in the right-hand menu, select `Developers` before clicking on `Select`.
 
-    ![Product - Add a Group](assets/lab3/part2-step6.jpg)
-
+   ![Product - Add a Group](assets/lab3/part2-step6.jpg)
 
 <div class="task" data-title="Task">
 
@@ -1122,21 +1236,22 @@ We will below how create the subscription keys.
 
 1. On the APIM screen, in the menu on the left, click on `Subscriptions`, then click on `+ Add subscription`.
 
-    ![Create a subscription](assets/lab3/part3_1-step1.jpg)
+   ![Create a subscription](assets/lab3/part3_1-step1.jpg)
 
 2. In the window that opens, fill in the fields with the following values and then click `Create`:
-    - **Name**: `Basic-Subscription`
-    - **Display name**: `Basic-Subscription`
-    - **Scope**: `Product`
-    - **Product**: `Basic`
 
-    ![See subscription details](assets/lab3/part3_1-step2.jpg)
+   - **Name**: `Basic-Subscription`
+   - **Display name**: `Basic-Subscription`
+   - **Scope**: `Product`
+   - **Product**: `Basic`
+
+   ![See subscription details](assets/lab3/part3_1-step2.jpg)
 
 3. For the purpose of the part 4, repeat steps 1 and 2 to create another subscription linked to the product `Premium`, with the following fields value :
-    - **Name**: `Premium-Subscription`
-    - **Display name**: `Premium-Subscription`
-    - **Scope**: `Product`
-    - **Product**: `Premium`
+   - **Name**: `Premium-Subscription`
+   - **Display name**: `Premium-Subscription`
+   - **Scope**: `Product`
+   - **Product**: `Premium`
 
 Now that we have created two subscriptions, each corresponding to one of our products, we can view their values by right-clicking on them and selecting `Show/hide keys`
 
@@ -1168,10 +1283,9 @@ We will know test our API with the subscription key.
 
 <summary> Toggle solution</summary>
 
->![Subscription Result Failed](assets/lab3/part3_1_ResultF.jpg)
+> ![Subscription Result Failed](assets/lab3/part3_1_ResultF.jpg)
 >
 > 🔴 The result of this test is negative. A 401 Access Denied error is returned by the APIM. The error message states that the subscription key is missing.
-
 
 </details>
 
@@ -1187,13 +1301,11 @@ We will know test our API with the subscription key.
 
 > In the Postman request, under the Headers tab, add the header `Ocp-Apim-Subscription-Key` and specify the value as the key retrieved during the creation of our subscription key. Then click on `Send`.
 >
->![Subscription Result Success](assets/lab3/part3_1_ResultG.jpg)
+> ![Subscription Result Success](assets/lab3/part3_1_ResultG.jpg)
 >
 > ✅ The call is now successful with a 200 OK response.
 
 </details>
-
-
 
 ### OAuth 2.0
 
@@ -1261,7 +1373,7 @@ The Azure EntraId configuration is ready. Let's move on to the API Management se
 1. On the APIM screen, in the menu on the left, click on APIs, then click on the `Orders API`.
 2. Go to `All operations`. On the right, in the `Inbound processing` section, click on the `</>` icon to access the policy editing mode.
 
-    ![Add a policy](assets/lab3/part3_2-step2.jpg)
+   ![Add a policy](assets/lab3/part3_2-step2.jpg)
 
 3. In the `<inbound>` section and under the `<base />` tag, add the following code and click on `Save`
 
@@ -1277,7 +1389,7 @@ The Azure EntraId configuration is ready. Let's move on to the API Management se
 
 ```
 
-  ![Validate JWT Token Policy](assets/lab3/part3_2-step3.jpg)
+![Validate JWT Token Policy](assets/lab3/part3_2-step3.jpg)
 
 <div class="task" data-title="Task">
 
@@ -1291,21 +1403,21 @@ The Azure EntraId configuration is ready. Let's move on to the API Management se
 
 <summary> Toggle solution</summary>
 
->![image](assets/lab3/part3_2_ResultF.jpg)
+> ![image](assets/lab3/part3_2_ResultF.jpg)
 >
 > 🔴 The API Manager returns a 401 error. Indeed, it is now necessary to pass the token in order to be authorized to call the API.
 
 </details>
 
-
 On Postman, create a new request with the following information
+
 - Method : POST
 - Url : `https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token` **TBD : how we get the tenant ??**
 - Under the Headers tab, choose the option x-www-form-urlencoded and add the following attributes with the values :
-    - **grant_type**: client_credentials
-    - **client_id**: **TBD**
-    - **client_secret**:**TBD**
-    - **scope**: **TBD**/.defaut
+  - **grant_type**: client_credentials
+  - **client_id**: **TBD**
+  - **client_secret**:**TBD**
+  - **scope**: **TBD**/.defaut
 - Click on Send
 - Retrieve the `access_token` returned by the identity provider.
 
@@ -1356,6 +1468,7 @@ To begin, we will set a limit for the Basic user to ensure they cannot call our 
 <summary> Toggle solution</summary>
 
 In the window that opens, fill in the fields with the following values and then click `Save`:
+
 - **Number of calls**: `5`
 - **Renewal period**: `60`
 - **Counter Key**: `API subscription`
@@ -1381,9 +1494,9 @@ In the window that opens, fill in the fields with the following values and then 
 
 <summary> Toggle solution</summary>
 
->![Result RateLimit Policy](assets/lab3/part4_1-Result.jpg)
+> ![Result RateLimit Policy](assets/lab3/part4_1-Result.jpg)
 >
->💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
+> 💡After the first 5 calls, subsequent calls are blocked. After 1 minutes, calls become possible again.
 
 </details>
 
@@ -1448,7 +1561,7 @@ To conclude, we will simulate the monetization of an API using a custom policy t
 
 > ![Request Result Failed](assets/lab3/part4_2-ResultF.jpg)
 >
->🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
+> 🔴 The API Manager returns a 429 error. Indeed, the credit value is 0 so we don't have credit to make API request.
 
 </details>
 
