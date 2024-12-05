@@ -60,7 +60,7 @@ You will require a tool to send HTTP requests without coding, such as [Postman](
 
 <div class="task" data-title="Task">
 
-> You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
+> You have to fork the [GitHub project](https://github.com/ikhemissi/azure-ipaas-workshop/) in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
 
 </div>
 
