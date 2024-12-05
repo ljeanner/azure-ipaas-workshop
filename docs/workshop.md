@@ -60,7 +60,8 @@ You will require a tool to send HTTP requests without coding such as [Postman](h
 ## Prepare your dev environment
 
 <div class="task" data-title="Task">
-You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
+
+> You have to fork the GitHub project in order to create your own copy to be edited through the lab and kept after for reference. You can clone it locally, but the lab will leverage GitHub Codespaces to avoid any local dependencies issues/conflicts.
 
 </div>
 
@@ -252,7 +253,7 @@ It comes with the `When a resource event occurs` action, that is triggered when 
 
 <div class="info" data-title="Note">
 
-> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
+> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in > the Storage Account, following default naming conventions.
 > The subscription will initially remain in the `Creating` state.
 
 </div>
@@ -634,7 +635,8 @@ It currently supports NoSQL, MongoDB, Cassandra, Gremlin, Table and PostgreSQL A
 
 Before creating the document in Cosmos DB, we need to add a unique `id` property to the document, as it is mandatory.
 We will use a `Compose` action to generate a unique identifier and append an `id` property to our message.
-TODO: Read up to this point, will continue tomorrow morning
+
+TODO (julien): Read up to this point, will continue tomorrow morning 
 
 <div class="task" data-title="Tasks">
 
