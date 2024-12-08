@@ -209,7 +209,7 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 <div class="task" data-title="Tasks">
 
-> - Check that the logic app has the `Event Grid Contributor` role for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
+> - Check that the logic app has the `EventGrid Contributor` role for the Event Grid System Topic on the Storage Account `stdatalabnoipa[randomid]`.
 
 </div>
 
@@ -219,13 +219,13 @@ The Logic App needs to access the Event Grid service through the Storage Account
 
 > - Navigate to the Storage Account `stdatalabnoipa[randomid]`.
 > - In the left-hand menu, click on `Access Control (IAM)`.
-> - From the top-menu bar, click on `Role Assignment` and check that Logic App `loa-proc-lab-no-ipa-[randomId]` system managed identity has the **Event Grid Contributor** role.
+> - From the top-menu bar, click on `Role Assignment` and check that Logic App `loa-proc-lab-no-ipa-[randomId]` system managed identity has the **EventGrid Contributor** role.
 
 You should see the following RBAC configuration in your Storage Account :
 
 ![IAM](assets/lab1/image-1.png)
 
-A Logic App triggered by Event Grid for blob uploads needs the `Event Grid Contributor` role on the storage account to subscribe to Event Grid blob-created events and to validate the webhook endpoint during setup. 
+A Logic App triggered by Event Grid for blob uploads needs the `EventGrid Contributor` role on the storage account to subscribe to Event Grid blob-created events and to validate the webhook endpoint during setup. 
 
 </details>
 
