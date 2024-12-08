@@ -44,17 +44,34 @@ In this lab, you are going to reproduce a real-life scenario from an e-commerce 
 - Customers will place new orders that will be synchronized asynchronously.
 - You are going to leverage Azure Services tailored to simplify this integration.
 
+<br>
+
 ![Architecture diagram](./assets/intro/architecture-schema.png)
 
-## Tooling and services
+
+## Azure iPaaS
+
+Azure iPaaS (Integration Platform as a Service) is a set of services which allow securely connecting apps, systems, and data in the cloud, on-premises, and at the edge.
+By leveraging integration services, organizations can bring workflows together so they're consistent and scalable.
+
+Integration services can broadly be categorized into Orchestration, Messaging, APIs, and Eventing services:
 
 - **Azure Logic Apps**: A cloud service that helps you automate workflows and integrate apps, data, and services.
 - **Azure Functions**: A serverless compute service that allows you to run event-driven code without managing infrastructure.
 - **Azure Service Bus**: A messaging service that enables reliable communication between distributed applications and services.
-- **Azure Developer CLI** (azd): `azd` is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
-- **GitHub Codespace**: GitHub Codespaces provides a cloud-based development environment that allows you to code, build, test, and collaborate from anywhere. It offers a fully configured development environment that can be accessed directly from your browser or through Visual Studio Code. With Codespaces, you can quickly spin up a development environment with all the necessary tools and dependencies, ensuring a consistent setup across your team.
+- **Azure Event Grid**:  A highly scalable, fully managed Pub Sub message distribution service that offers flexible message consumption patterns using the MQTT and HTTP protocols.
+- **Azure API Management**: A turnkey solution for publishing APIs to external and internal customers, quickly creating consistent and modern API gateways for existing back-end services hosted anywhere and analyzing and optimizing your APIs.
 
-You will require a tool to send HTTP requests without coding, such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [VSCode thunder](https://www.thunderclient.com/) or [VSCode Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+This workshop will focus on these 5 services and how you can leverage them to create a fast, scalabale, secure, and resilient real-world application.
+
+## Tools and workshop environment
+
+To get started quickly, we will be using the following services and tools:
+
+- **GitHub Codespace**: [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) provides a cloud-based development environment that allows you to code, build, test, and collaborate from anywhere. It offers a fully configured development environment that can be accessed directly from your browser or through Visual Studio Code. With Codespaces, you can quickly spin up a development environment with all the necessary tools and dependencies, ensuring a consistent setup across your team.
+- **Azure Developer CLI** (azd): [azd](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview?tabs=linux) is a command-line interface designed to simplify the deployment and management of applications on Azure. It provides a unified experience for developers to build, deploy, and monitor their applications using a set of easy-to-use commands. With `azd`, you can streamline your workflow, automate repetitive tasks, and ensure consistent deployments across different environments.
+- **HTTP clients**: You will be required to send HTTP requests in many parts of the workshop. To simplify this process, we have already installed both [VSCode Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and [Postman](https://www.postman.com/) as VS Code extensions in the Github codespace environment. Feel free to use your preferred HTTP client.
+
 
 ## Prepare your dev environment
 
@@ -68,12 +85,15 @@ You will require a tool to send HTTP requests without coding, such as [Postman](
 
 <summary> Toggle solution</summary>
 
-1- Open the [lab repository](https://github.com/ikhemissi/azure-ipaas-workshop/)
+1. Open the [lab repository](https://github.com/ikhemissi/azure-ipaas-workshop/)
 
-2- Click on `Code`, select the `Codespaces` tab, and click `Create codespace on main`.
+1. Fork the project by clicking on the `Fork` button on the top right. This step may take a couple of minutes. Once this is done, you will have your own copy of the project which you can use to save your changes.
+![Project forking](assets/intro/project-forking.png)
+
+1. Click on `Code`, select the `Codespaces` tab, and click `Create codespace on main`.
 ![Create codespace](assets/intro/codespace.png)
 
-3- It should open a new tab in your browser with a full fledged IDE and a terminal that will be exclusively used for the lab. It can take a few minutes for the initial setup as Codespace starts a devcontainer on a dedicated virtual machine, with the initial setup, tools and configurations to successfully achieve the lab.
+1. It should open a new tab in your browser with a full fledged IDE and a terminal that will be exclusively used for the lab. It can take a few minutes for the initial setup as Codespace starts a devcontainer on a dedicated virtual machine, with the initial setup, tools and configurations to successfully achieve the lab.
 ![Codespace editor](assets/intro/codespace2.png)
 
 </details>
@@ -82,14 +102,25 @@ You will require a tool to send HTTP requests without coding, such as [Postman](
 
 <div class="task" data-title="Task">
 
-> - Use `azd` to provision resources in Azure and deploy provided applications.
-> - You can use the `azd up` command, once logged in Azure, from your terminal.
+> - Log into the [Azure Portal](https://portal.azure.com)
+> - Use `azd up` from your terminal to provision resources in Azure and deploy the applications described in `azure.yaml` (you can find this file at the root of the project)
+
+</div>
+
+<div class="tip" data-title="Tips">
+
+> - If you are doing this workshop as part of an instructor-led lab, please use the Azure credentials provided by your instructor.
+> - A terminal should also be opened on the bottom panel of your Github Codespace. If you cannot see it, please open a new one using the burger menu on the top left, then `View`, then `Terminal`.
 
 </div>
 
 <details>
 
 <summary> Toggle solution</summary>
+
+Log into the [Azure Portal](https://portal.azure.com)
+
+Then run the following commands in the terminal:
 
 ```sh
 # Log into azd
@@ -103,7 +134,7 @@ azd up
 
 ### Validate the setup on Azure
 
-The provisioning steps may take a few minutes. Once it's finished, you should have a resource group ready with all the resources needed in this workshop.
+The provisioning step may take few minutes. Once it has finished, you should have a resource group ready with all the resources needed in this workshop.
 
 Moreover, some of the applications (e.g. Azure Functions) should also be deployed and ready to be used.
 
