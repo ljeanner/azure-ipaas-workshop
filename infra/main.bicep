@@ -260,7 +260,7 @@ module cosmosContributorDataProcessorAssignment './core/database/cosmos/sql/cosm
   name: 'cosmosContributorDataProcessorAssignment'
   params: {
     accountName: cosmos.outputs.accountName
-    roleDefinitionId: cosmos.outputs.roleDefinitionId
+    roleDefinitionId: cosmos.outputs.dataContributorRoleDefinitionId
     principalId: dataProcessingFunctionApp.outputs.principalId
   }
 }
@@ -270,7 +270,7 @@ module cosmosContributorDataFetcherAssignment './core/database/cosmos/sql/cosmos
   name: 'cosmosContributorDataFetcherAssignment'
   params: {
     accountName: cosmos.outputs.accountName
-    roleDefinitionId: cosmos.outputs.roleDefinitionId
+    roleDefinitionId: cosmos.outputs.dataReaderRoleDefinitionId
     principalId: dataFetchingFunctionApp.outputs.principalId
   }
 }
@@ -280,7 +280,7 @@ module cosmosContributorUserAssignment './core/database/cosmos/sql/cosmos-sql-ro
   name: 'cosmosContributorUserAssignment'
   params: {
     accountName: cosmos.outputs.accountName
-    roleDefinitionId: cosmos.outputs.roleDefinitionId
+    roleDefinitionId: cosmos.outputs.dataContributorRoleDefinitionId
     principalId: principalId
   }
 }

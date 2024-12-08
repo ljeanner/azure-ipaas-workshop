@@ -23,7 +23,6 @@ module cosmos './core/database/cosmos/sql/cosmos-sql-db.bicep' = {
     location: location
     containers: containers
     // keyVaultName: keyVaultName
-    // principalIds: [],
     tags: tags
   }
 }
@@ -34,4 +33,5 @@ output containerName string = containers[0].name
 output endpoint string = cosmos.outputs.endpoint
 output accountId string = cosmos.outputs.accountId
 output accountName string = accountName
-output roleDefinitionId string = cosmos.outputs.roleDefinitionId
+output dataReaderRoleDefinitionId string = cosmos.outputs.dataReaderRoleDefinitionId
+output dataContributorRoleDefinitionId string = cosmos.outputs.dataContributorRoleDefinitionId
