@@ -57,6 +57,7 @@ var dataProcessingDeploymentPackageContainerName = 'dataprocessingdeploymentpack
 var dataFetchingDeploymentPackageContainerName = 'datafetchingdeploymentpackage'
 var cosmosOrdersToProcessContainerName = 'toprocess'
 var cosmosOrdersProcessedContainerName = 'processed'
+var cosmosOrdersLeasesContainerName = 'leases'
 
 module storageAccountData './storageaccount.bicep' = {
   name: 'storageAccountData'
@@ -119,6 +120,10 @@ module dataProcessingFunctionApp './functionapp.bicep' = {
       {
         name  : 'COSMOS_DB_PROCESSED_CONTAINER_NAME'
         value : cosmosOrdersProcessedContainerName
+      }
+      {
+        name  : 'COSMOS_DB_LEASES_CONTAINER_NAME'
+        value : cosmosOrdersLeasesContainerName
       }
       {
         name  : 'COSMOS_DB__accountEndpoint'
@@ -208,6 +213,11 @@ module cosmos './cosmos.bicep' = {
       {
         name: cosmosOrdersProcessedContainerName
         id: cosmosOrdersProcessedContainerName
+        partitionKey: '/id'
+      }
+      {
+        name: cosmosOrdersLeasesContainerName
+        id: cosmosOrdersLeasesContainerName
         partitionKey: '/id'
       }
     ]
