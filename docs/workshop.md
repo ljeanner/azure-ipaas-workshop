@@ -902,24 +902,48 @@ You should see your transformed message in the `toprocess` container:
 
 # Lab 2 : Sync and async patterns with Azure Functions and Service Bus (45m)
 
-In the previous lab, we have added orders to a CosmosDB database.
-In this lab, we will focus on processing and fetching these orders by implementing two workflows:
+In the previous lab, you have prepared orders using a Logic App and you have stored these orders to the `toprocess` container in CosmosDB.
 
-1. Processing orders asynchronously using Azure Functions and Service Bus
-2. Fetching and serving order synchronously via HTTP using Azure Functions
+In this lab, you will focus on processing and fetching these orders by implementing two workflows using Azure Functions (Flex Consumption) and Service Bus:
 
-As a reminder, you are now going to use:
+1. **Data processing**: Now that you have order details in the `toprocess` container, you will need to process these orders using Azure Functions, and store processed orders in the `processed` container of Cosmos DB. In order to make the workflow resilient, you will also need to use Service Bus to allow retrying and recovery following transient failures.
+2. **Data serving**: Once you have stored the processed orders in Cosmos DB, you will need to provide access to them via an API. You will be using Azure Functions and its built-in HTTP trigger to implement this.
 
-- **Azure Functions**: A serverless compute service that allows you to run event-driven code without managing infrastructure.
-- **Azure Service Bus**: A messaging service that enables reliable communication between distributed applications and services.
+<br>
 
 ![Architecture diagram lab 2](./assets/lab2/architecture-schema-lab2.png)
+
+## Knowledge refresh
+
+### Azure Functions
+
+A serverless compute service that allows you to run event-driven code without managing infrastructure.
+
+### Flex Consumption plan
+
+A Linux-based Azure Functions hosting plan that builds on the Consumption pay for what you use serverless billing model. It gives you more flexibility and customizability by introducing private networking, instance memory size selection, and fast/large scale-out features still based on a serverless model.
+
+### Azure Function bindings and triggers
+
+Azure Functions are event-driven: they must be triggered by an event coming from a variety of sources. This model is based on a set of triggers and bindings which let you avoid hard-coding access to other services. Your function receives data (for example, the content of a queue message) in function parameters. You send data (for example, to create a queue message) by using the return value of the function :
+
+- **Binding** to a function is a way of connecting another resource to the function in a declarative way; bindings can be used to fetch data (input bindings), write data (output bindings), or both. Azure services such as Azure Storage blobs and queues, Service Bus queues, Event Hubs, and Cosmos DB provide data to the function as parameters.
+
+- **Triggers** are a specific kind of binding that causes a function to run. A trigger defines how a function is invoked, and a function must have exactly one trigger. Triggers have associated data, which is often provided as a parameter payload to the function. 
+
+### Azure Service Bus
+
+A messaging service that enables reliable communication between distributed applications and services.
+
+### Cosmos DB
+
+A fully managed, distributed NoSQL, relational, and vector database service designed for modern app development. It offers high performance, high availability, and support for various data models, including document, key-value, graph, and table.
 
 ## Queueing orders in Service Bus
 
 Asynchronous operations are **essential** in modern applications to ensure that tasks are processed without blocking the main execution flow, improving overall performance and user experience. A message broker like Azure Service Bus enhances resiliency by decoupling application components, allowing them to communicate reliably even if one component is temporarily unavailable. Service Bus supports operation retries, ensuring that messages are eventually processed even in the face of transient failures, thus maintaining the integrity and reliability of the system.
 
-The data processing function app (with a name starting with `func-proc-lab`) should already have 2 functions deployed `QueueOrders` and `ProcessOrders`.
+The data processing function app (`func-proc-lab-[randomId]`) should already have 2 functions deployed `QueueOrders` and `ProcessOrders`.
 
 <div class="task" data-title="Task">
 
@@ -929,9 +953,9 @@ The data processing function app (with a name starting with `func-proc-lab`) sho
 
 <div class="tip" data-title="Tips">
 
-> - You can use the environment variables `SERVICEBUS_QUEUE`, and `SB_ORDERS__fullyQualifiedNamespace` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-<SUFFIX>`
+> - You can use the environment variables `SERVICEBUS_QUEUE`, and `SB_ORDERS__fullyQualifiedNamespace` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-[randomId]`. Both environment variables have already been set on the Function App when you have provisioned the resources at the beginning on the workshop.
 >
-> - You can leverage the [Service Bus output binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript)
+> - You can leverage the [Service Bus output binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript) to easily add order messages to Service Bus.
 
 </div>
 
@@ -985,7 +1009,7 @@ Once you have deployed your updated Function App, you need to test your new chan
 
 <summary> Toggle solution</summary>
 
-Locate your data processing Function App (name starting with `func-proc-lab`), click on the function `ProcessOrders`, and check the `Invocations` tab.
+Locate your data processing Function App (`func-proc-lab-[randomId]`), click on the function `ProcessOrders`, and check the `Invocations` tab.
 
 You should see a new recent invocation (this may take a while).
 
@@ -993,7 +1017,7 @@ Check the logs of the invocation to get more details.
 
 </details>
 
-## Processing orders
+## Processing orders asynchronously
 
 In this step, we will update the `ProcessOrders` function to process orders while being able to retry automatically if order processing fails.
 
@@ -1005,7 +1029,7 @@ In this step, we will update the `ProcessOrders` function to process orders whil
 
 <div class="tip" data-title="Tips">
 
-> - You can use the environment variables `COSMOS_DB_DATABASE_NAME`, `COSMOS_DB_PROCESSED_CONTAINER_NAME`, and `COSMOS_DB__accountEndpoint` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-<SUFFIX>`
+> - You can use the environment variables `COSMOS_DB_DATABASE_NAME`, `COSMOS_DB_PROCESSED_CONTAINER_NAME`, and `COSMOS_DB__accountEndpoint` to send messages to Service Bus using the managed identity of the Function App `func-proc-lab-[randomId]`. These environment variables have already been set on the Function App when you provisioned resources on Azure at the beginning of the workshop.
 >
 > - You can leverage the [CosmosDB output binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv4&pivots=programming-language-javascript)
 
@@ -1074,11 +1098,11 @@ You should be able to see new entries with the test data which you have used wit
 
 </details>
 
-## Fetch and serve orders
+## Serving orders via HTTP
 
 In addition to reacting to events (e.g. message in Service Bus), Azure Functions also allows you to implement APIs and serve HTTP requests.
 
-In this last exercice of Lab2, you need to update the data fetching Function App (with a name starting with `func-ftch-lab`) to have the `FetchOrders` return the latest processed orders.
+In this last exercice of Lab2, you need to update the data fetching Function App (`func-ftch-lab-[randomId]`) to have the `FetchOrders` return the latest processed orders.
 
 <div class="task" data-title="Task">
 
@@ -1088,7 +1112,7 @@ In this last exercice of Lab2, you need to update the data fetching Function App
 
 <div class="tip" data-title="Tips">
 
-> - You can leverage the data returned from the [CosmosDB input binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript)
+> - You can leverage the data returned from the [CosmosDB input binding](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-output?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript). This binding allows you to easily fetch data from Cosmos DB.
 
 </div>
 
