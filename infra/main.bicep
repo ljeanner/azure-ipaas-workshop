@@ -335,6 +335,17 @@ module eventGridContributorAssignmentLogicAppRg './resourcegroup-role-assign.bic
   }
 }
 
+module logicAppZipDeploy './logicapp-zipdeploy.bicep' = {
+  scope: resourceGroup
+  name: 'logicAppZipDeploy'
+  params: {
+    logicAppName: dataProcessingLogicApp.outputs.name
+  }  
+  dependsOn: [
+    eventGridContributorAssignmentLogicAppRg
+  ]
+}
+
 module blobStorageContributorAssignmentLogicApp './storageaccount-role-assign.bicep' = {
   scope: resourceGroup
   name: 'blobStorageContributorAssignmentLogicApp'

@@ -225,8 +225,6 @@ You should see the following RBAC configuration in your Storage Account :
 
 </details>
 
-// TO DO : FAIRE UNE TRANSITION AVEC LE DESIGNER
-
 ### Check the Logic App Workflows
 
 A **workflows** is a series of operations that define a task, business process, or workload. Each workflow always starts with a single trigger operation, after which you must add one or more action operations.
@@ -252,7 +250,7 @@ It comes with the `When a resource event occurs` action, that is triggered when 
 
 <div class="info" data-title="Note">
 
-> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in > the Storage Account, following default naming conventions.
+> When we save the Logic App workflow for the first time, the Event Grid Trigger will create automatically an Event Grid subscription in the Storage Account, following default naming conventions.
 > The subscription will initially remain in the `Creating` state.
 
 </div>
@@ -260,8 +258,6 @@ It comes with the `When a resource event occurs` action, that is triggered when 
 <div class="task" data-title="Tasks">
 
 > - Check the Logic App `loa-proc-lab-no-ipa-[randomId]`, and confirm the configuration of the Event Grid trigger workflow `wf_orders_from_sa_to_sb`.
-> - Do a modification by adding a whitespace in the subscription textbox
-> - Save the workflow once confirmed to create the Event Grid System Topic subscription automatically.
 
 </div>
 
@@ -275,8 +271,6 @@ It comes with the `When a resource event occurs` action, that is triggered when 
 > - In the left-hand menu, click on `Designer` from the `Developer` section.
 > - Select the `When a resource event occurs` trigger.
 > - Make sure that the Resource Id corresponds to your Storage Account where the file will be uploaded and that the Event type is **Microsoft.Storage.BlobCreated**
-> - In the `Subscription` textbox, add a space
-> - Save the workflow
 
 You should see the following :
 
@@ -470,8 +464,8 @@ The next section will focus on the subscription to this message and its processi
 
 ## Subscribe to the message (5 min)
 
-Next step is to subscribe to the Service Bus queue where the messages are published to be able to process them later.
-We will build a workflow that will be triggered when a new message is available in the dedicated Service Bus queue, containing our message.
+Next step is to subscribe to the Service Bus topic where the messages are published to be able to process them later.
+We will build a workflow that will be triggered when a new message is available in the dedicated Service Bus topic, containing our message.
 
 ### Configure the Service Bus trigger in Logic App
 
@@ -527,7 +521,7 @@ Additionally, Logic Apps supports external tools like Azure API Management for p
 We need to transform the initial message to a simplified JSON schema that is expected by the target system.
 By consolidating passenger names into a list and focusing on key flight and payment details, we make the data more compact and easier for the target system to process.
 
-This is the message JSON format sent by the source system:
+This is the message in JSON format sent by the source system:
 
 ```json
 {
@@ -860,12 +854,6 @@ You should see your transformed message in the `toprocess` container:
 ![CosmosDB Container](assets/lab1/image-20.png)
 
 </details>
-
-<div class="info" data-title="Note">
-
-> If you don't see your message in CosmosDB, please re-upload the file. The first time you upload a file to the blob storage, Event Grid sends the validation event multiple times to the Logic App until it receives validation. Once validated, Event Grid will start sending actual events, which may require re-uploading the file. You can overwrite the existing file.
-
-</div>
 
 ---
 
