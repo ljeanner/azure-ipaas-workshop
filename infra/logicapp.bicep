@@ -168,14 +168,5 @@ resource apiConnectionAccessPolicy 'Microsoft.Web/connections/accessPolicies@201
   }
 }
 
-resource logicAppZipDeploy 'Microsoft.Web/sites/extensions@2022-03-01' = {
-  name: '${logicApp.name}/zipdeploy'
-  properties: {
-    packageUri: 'https://github.com/ikhemissi/azure-ipaas-workshop/raw/refs/heads/main/src/workflows.zip'
-  }
-  dependsOn: [
-    apiConnectionAccessPolicy
-  ]
-}
-
 output principalId string = logicApp.identity.principalId
+output name string = logicApp.name
